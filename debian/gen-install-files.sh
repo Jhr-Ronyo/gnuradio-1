@@ -21,13 +21,6 @@ $EXTRACT gnuradio-core/src/lib/runtime/Makefile swiginclude_HEADERS >>$NAME
 $EXTRACT gnuradio-core/src/lib/swig/Makefile grinclude_HEADERS >>$NAME
 $EXTRACT gnuradio-core/src/lib/swig/Makefile swiginclude_HEADERS >>$NAME
 
-# libmblock0-dev
-NAME=debian/libmblock0-dev.install
-rm -f $NAME
-touch $NAME
-$EXTRACT mblock/src/lib/Makefile include_HEADERS >>$NAME
-$EXTRACT mblock/src/lib/Makefile swiginclude_HEADERS >>$NAME
-
 # python-gnuradio-core
 NAME=debian/python-gnuradio-core.install
 rm -f $NAME
@@ -52,12 +45,6 @@ rm -f $NAME
 touch $NAME
 $EXTRACT usrp/host/lib/legacy/Makefile include_HEADERS >>$NAME
 $EXTRACT usrp/firmware/include/Makefile include_HEADERS >>$NAME
-
-# libusrp-inband0-dev
-NAME=debian/libusrp-inband0-dev.install
-rm -f $NAME
-touch $NAME
-$EXTRACT usrp/host/lib/inband/Makefile include_HEADERS >>$NAME
 
 # python-usrp
 NAME=debian/python-usrp.install
@@ -151,16 +138,6 @@ $EXTRACT gr-comedi/src/Makefile ourlib_LTLIBRARIES >>$NAME
 $EXTRACT gr-comedi/src/Makefile ourlib_LTLIBRARIES | \
     sed -e 's/\.la$/.so/' >>$NAME
 
-# python-gnuradio-cvsd-vocoder
-NAME=debian/python-gnuradio-cvsd-vocoder.install
-rm -f $NAME
-touch $NAME
-$EXTRACT gr-cvsd-vocoder/src/python/Makefile grblkspython_PYTHON >>$NAME
-$EXTRACT gr-cvsd-vocoder/src/lib/Makefile ourpython_PYTHON >>$NAME
-$EXTRACT gr-cvsd-vocoder/src/lib/Makefile ourlib_LTLIBRARIES >>$NAME
-$EXTRACT gr-cvsd-vocoder/src/lib/Makefile ourlib_LTLIBRARIES | \
-    sed -e 's/\.la$/.so/' >>$NAME
-
 # python-gnuradio-gsm-fr-vocoder
 NAME=debian/python-gnuradio-gsm-fr-vocoder.install
 rm -f $NAME
@@ -203,9 +180,7 @@ touch $NAME
 $EXTRACT gnuradio-examples/python/apps/hf_explorer/Makefile ourdata_DATA >>$NAME
 $EXTRACT gnuradio-examples/python/apps/hf_radio/Makefile ourdata_DATA >>$NAME
 $EXTRACT gnuradio-examples/python/audio/Makefile ourdata_DATA >>$NAME
-$EXTRACT gnuradio-examples/python/dect/Makefile ourdata_DATA >>$NAME
 $EXTRACT gnuradio-examples/python/digital/Makefile ourdata_DATA >>$NAME
-$EXTRACT gnuradio-examples/python/digital_voice/Makefile ourdata_DATA >>$NAME
 $EXTRACT gnuradio-examples/python/multi-antenna/Makefile ourdata_DATA >>$NAME
 $EXTRACT gnuradio-examples/python/multi_usrp/Makefile ourdata_DATA >>$NAME
 $EXTRACT gnuradio-examples/python/network/Makefile ourdata_DATA >>$NAME

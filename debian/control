@@ -25,42 +25,6 @@ Description: GNU Radio Omnithreads Abstraction Library
  .
  This package contains header files needed by developers.
 
-Package: libpmt0c2a
-Section: libs
-Architecture: any
-Depends: ${shlibs:Depends}
-Description: GNU Radio Polymorphic Type Library
- This package implements polymorphic types.  These are similar 
- to lisp or Python data objects, and implement transparent
- reference counting using the boost shared_ptr templates.
-
-Package: libpmt0-dev
-Section: libdevel
-Architecture: any
-Depends: libpmt0c2a (= ${binary:Version}), libgnuradio-omnithread0-dev, libboost-dev
-Description: GNU Radio Polymorphic Type Library
- This package implements polymorphic types.  These are similar 
- to lisp or python data objects, and implement transparent
- reference counting using the boost shared_ptr templates.
- .
- This package contains header files needed by developers.
-
-Package: libmblock0c2a
-Section: libs
-Architecture: any
-Depends: ${shlibs:Depends}
-Description: GNU Radio Message Block Library
- This package provides the GNU Radio message block library.
-
-Package: libmblock0-dev
-Section: libdevel
-Architecture: any
-Depends: libmblock0c2a (= ${binary:Version}), libgnuradio-omnithread0-dev, libpmt0-dev
-Description: GNU Radio Message Block Library
- This package provides the GNU Radio message block library.
- .
- This package contains header files needed by developers.
-
 Package: libgnuradio-core0c2a
 Section: libs
 Architecture: any
@@ -166,16 +130,6 @@ Description: GNU Radio Python Comedilib Driver
  This package provides the Python interface to the GNU Radio driver
  for the comedilib data acquisition hardware library.
 
-Package: python-gnuradio-cvsd-vocoder
-Architecture: any
-Depends: ${python:Depends}, ${shlibs:Depends}, python-gnuradio-core
-Provides: ${python:Provides}
-Section: python
-XB-Python-Version: ${python:Versions}
-Description: GNU Radio CVSD Vocoder
- This package provides an implementation of a CVSD vocoder for
- GNU Radio.
-
 Package: python-gnuradio-gsm-fr-vocoder
 Architecture: any
 Depends: ${python:Depends}, ${shlibs:Depends}, python-gnuradio-core
@@ -209,7 +163,7 @@ Description: GNU Radio SDL Interface Library
 Package: python-gnuradio
 Section: python
 Architecture: all
-Depends: python-gnuradio-core, python-gnuradio-wxgui, python-gnuradio-audio-alsa | python-gnuradio-audio, python-gnuradio-atsc, python-gnuradio-comedi, python-gnuradio-cvsd-vocoder, python-gnuradio-gsm-fr-vocoder, python-gnuradio-trellis, python-gnuradio-video-sdl
+Depends: python-gnuradio-core, python-gnuradio-wxgui, python-gnuradio-audio-alsa | python-gnuradio-audio, python-gnuradio-atsc, python-gnuradio-comedi, python-gnuradio-gsm-fr-vocoder, python-gnuradio-trellis, python-gnuradio-video-sdl
 Provides: ${python:Provides}
 XB-Python-Version: ${python:Versions}
 Description: Python Libraries for GNU Radio Components
@@ -237,7 +191,7 @@ Description: GNU Software Defined Radio
 Package: gnuradio-dev
 Section: libdevel
 Architecture: all
-Depends: libgnuradio-core0-dev, libgnuradio-omnithread0-dev, libmblock0-dev, libpmt0-dev
+Depends: libgnuradio-core0-dev, libgnuradio-omnithread0-dev
 Description: Development headers for GNU Radio C++ development
  This is a virtual package that depends on all the development header packages
  for the various GNU Radio components.  It is only needed if you intend to 
@@ -289,24 +243,6 @@ Description: Client side library for the USRP
  .
  This package contains the client-side library, providing an easy interface
  for communicating with the USRP.
- .
- This package contains header files needed by developers.
-
-Package: libusrp-inband0c2a
-Section: contrib/libs
-Architecture: any
-Depends: ${shlibs:Depends}
-Description: Client side library for the USRP with in-band signaling
- The package is an alternative C++ interface to the USRP that implements
- an experimental in-band signaling method across the USB.
-
-Package: libusrp-inband0-dev
-Section: contrib/libdevel
-Architecture: any
-Depends: libusrp-inband0c2a (= ${binary:Version}), libusrp0-dev
-Description: Client side library for the USRP with in-band signaling
- The package is an alternative C++ interface to the USRP that implements
- an experimental in-band signaling method across the USB.
  .
  This package contains header files needed by developers.
 
