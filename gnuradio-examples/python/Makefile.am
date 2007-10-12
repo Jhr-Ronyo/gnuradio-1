@@ -28,7 +28,6 @@ SUBDIRS = \
 	multi-antenna \
 	multi_usrp \
 	network \
-	ofdm \
 	usrp
 
 # Make example scripts with #! executable

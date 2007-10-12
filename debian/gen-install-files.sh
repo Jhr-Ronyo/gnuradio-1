@@ -184,7 +184,6 @@ $EXTRACT gnuradio-examples/python/digital/Makefile ourdata_DATA >>$NAME
 $EXTRACT gnuradio-examples/python/multi-antenna/Makefile ourdata_DATA >>$NAME
 $EXTRACT gnuradio-examples/python/multi_usrp/Makefile ourdata_DATA >>$NAME
 $EXTRACT gnuradio-examples/python/network/Makefile ourdata_DATA >>$NAME
-$EXTRACT gnuradio-examples/python/ofdm/Makefile ourdata_DATA >>$NAME
 $EXTRACT gnuradio-examples/python/usrp/Makefile ourdata_DATA >>$NAME
 
 # gnuradio-pager
