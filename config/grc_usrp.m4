@@ -23,7 +23,6 @@ AC_DEFUN([GRC_USRP],[
     AC_CONFIG_FILES([ \
 	usrp/Makefile \
 	usrp/usrp.pc \
-	usrp/usrp-inband.pc \
         usrp/usrp.iss \
         usrp/doc/Doxyfile \
         usrp/doc/Makefile \
@@ -31,12 +30,10 @@ AC_DEFUN([GRC_USRP],[
         usrp/host/Makefile \
         usrp/host/misc/Makefile \
         usrp/host/lib/Makefile \
-        usrp/host/lib/inband/Makefile \
         usrp/host/lib/legacy/Makefile \
         usrp/host/lib/legacy/std_paths.h \
         usrp/host/swig/Makefile \
         usrp/host/apps/Makefile \
-        usrp/host/apps-inband/Makefile \
         usrp/firmware/Makefile \
         usrp/firmware/include/Makefile \
         usrp/firmware/lib/Makefile \

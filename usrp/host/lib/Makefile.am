@@ -20,5 +20,5 @@
 
 include $(top_srcdir)/Makefile.common
 
-SUBDIRS = legacy inband
+SUBDIRS = legacy
 

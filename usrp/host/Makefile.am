@@ -19,5 +19,5 @@
 # Boston, MA 02110-1301, USA.
 # 
 
-SUBDIRS = misc lib swig apps apps-inband
+SUBDIRS = misc lib swig apps
 

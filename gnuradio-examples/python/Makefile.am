@@ -24,9 +24,7 @@ include $(top_srcdir)/Makefile.common
 SUBDIRS = \
 	apps \
 	audio \
-	dect \
 	digital \
-	digital_voice \
 	multi-antenna \
 	multi_usrp \
 	network \
