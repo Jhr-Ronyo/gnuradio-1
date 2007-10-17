@@ -67,7 +67,11 @@ OMNITHREAD_INCLUDES = -I$(top_srcdir)/omnithread
 OMNITHREAD_LA = $(top_builddir)/omnithread/libgromnithread.la
 
 # How to link in GNU Radio core library from inside the tree
-GNURADIO_CORE_LA = $(top_builddir)/gnuradio-core/src/lib/libgnuradio-core.la
+# NOTE: The below line is a workaround for a broken libtool implementation
+#  for Win32.  Normally, the addition of OMNITHREAD_LA would not be necessary,
+#  as this information is already in the core .la file.
+GNURADIO_CORE_LA = $(top_builddir)/gnuradio-core/src/lib/libgnuradio-core.la \
+		   $(OMNITHREAD_LA)
 
 # This is a dependency for many swig operations
 GNURADIO_I = $(top_srcdir)/gnuradio-core/src/lib/swig/gnuradio.i
