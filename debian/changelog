@@ -1,4 +1,15 @@
-gnuradio (3.1.0) unstable; urgency=low
+gnuradio (3.1.1) stable; urgency=high
+
+  * Fixed regressions in digital packet radio (t196,t198)
+  * Fixed RX phase offset causing sidebands (t195)
+  * Fixed TX I/Q swapping bug (t179)
+  * Fixed loopback bug in gr-sounder
+  * Added complex and dual-channel options to oscope for
+    BasicRX and LFRX
+
+ -- Johnathan Corgan <jcorgan@corganenterprises.com>  Sun,  4 Nov 2007 21:15:00 -0800
+
+gnuradio (3.1.0) stable; urgency=low
 
   * Release 3.1 stable branch
   * add/split packages to cover entire GNU Radio distribution
