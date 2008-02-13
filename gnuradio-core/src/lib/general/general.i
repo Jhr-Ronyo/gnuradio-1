@@ -118,6 +118,7 @@
 #include <gr_bin_statistics_f.h>
 #include <gr_glfsr_source_b.h>
 #include <gr_glfsr_source_f.h>
+#include <gr_peak_detector2_fb.h>
 %}
 
 %include "gr_nop.i"
@@ -216,3 +217,4 @@
 %include "gr_bin_statistics_f.i"
 %include "gr_glfsr_source_b.i"
 %include "gr_glfsr_source_f.i"
+%include "gr_peak_detector2_fb.i"

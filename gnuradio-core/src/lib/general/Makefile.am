@@ -98,6 +98,7 @@ libgeneral_la_SOURCES = 		\
 	gr_null_source.cc		\
 	gr_pa_2x2_phase_combiner.cc	\
 	gr_packet_sink.cc		\
+	gr_peak_detector2_fb.cc		\
 	gr_phase_modulator_fc.cc	\
 	gr_pll_carriertracking_cc.cc	\
 	gr_pll_freqdet_cf.cc		\
@@ -230,6 +231,7 @@ grinclude_HEADERS = 			\
 	gr_null_source.h		\
 	gr_pa_2x2_phase_combiner.h	\
 	gr_packet_sink.h		\
+	gr_peak_detector2_fb.h		\
 	gr_phase_modulator_fc.h		\
 	gr_pll_carriertracking_cc.h	\
 	gr_pll_freqdet_cf.h		\
@@ -363,6 +365,7 @@ swiginclude_HEADERS =			\
 	gr_null_source.i		\
 	gr_pa_2x2_phase_combiner.i	\
 	gr_packet_sink.i		\
+	gr_peak_detector2_fb.i		\
 	gr_phase_modulator_fc.i		\
 	gr_pll_carriertracking_cc.i	\
 	gr_pll_freqdet_cf.i		\
