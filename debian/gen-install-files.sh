@@ -34,7 +34,7 @@ $EXTRACT gnuradio-core/src/python/gnuradio/gr/Makefile grgrpython_PYTHON >>$NAME
 $EXTRACT gnuradio-core/src/python/gnuradio/blks/Makefile grblkspython_PYTHON >>$NAME
 $EXTRACT gnuradio-core/src/python/gnuradio/blks2/Makefile grblks2python_PYTHON >>$NAME
 $EXTRACT gnuradio-core/src/python/gnuradio/blksimpl/Makefile grblkspython_PYTHON >>$NAME
-$EXTRACT gnuradio-core/src/python/gnuradio/blks2impl/Makefile grblks2python_PYTHON >>$NAME
+$EXTRACT gnuradio-core/src/python/gnuradio/blks2impl/Makefile grblkspython_PYTHON >>$NAME
 $EXTRACT gnuradio-core/src/python/gnuradio/gru/Makefile grblkspython_PYTHON >>$NAME
 $EXTRACT gnuradio-core/src/python/gnuradio/gruimpl/Makefile grupython_PYTHON >>$NAME
 $EXTRACT gnuradio-core/src/python/gnuradio/vocoder/Makefile grvocoderpython_PYTHON >>$NAME
