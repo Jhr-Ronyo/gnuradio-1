@@ -34,7 +34,7 @@ $EXTRACT gnuradio-core/src/python/gnuradio/gr/Makefile grgrpython_PYTHON >>$NAME
 $EXTRACT gnuradio-core/src/python/gnuradio/blks/Makefile grblkspython_PYTHON >>$NAME
 $EXTRACT gnuradio-core/src/python/gnuradio/blks2/Makefile grblks2python_PYTHON >>$NAME
 $EXTRACT gnuradio-core/src/python/gnuradio/blksimpl/Makefile grblkspython_PYTHON >>$NAME
-$EXTRACT gnuradio-core/src/python/gnuradio/blks2impl/Makefile grblkspython_PYTHON >>$NAME
+$EXTRACT gnuradio-core/src/python/gnuradio/blks2impl/Makefile grblks2python_PYTHON >>$NAME
 $EXTRACT gnuradio-core/src/python/gnuradio/gru/Makefile grblkspython_PYTHON >>$NAME
 $EXTRACT gnuradio-core/src/python/gnuradio/gruimpl/Makefile grupython_PYTHON >>$NAME
 $EXTRACT gnuradio-core/src/python/gnuradio/vocoder/Makefile grvocoderpython_PYTHON >>$NAME
@@ -71,6 +71,7 @@ rm -f $NAME
 touch $NAME
 echo etc/gnuradio/conf.d/gr-wxgui.conf >>$NAME
 $EXTRACT gr-wxgui/src/python/Makefile ourpython_PYTHON >>$NAME
+#$EXTRACT gr-wxgui/Makefile pkgconfig_DATA >>$NAME
 
 # python-gnuradio-atsc
 NAME=debian/python-gnuradio-atsc.install
@@ -171,6 +172,7 @@ $EXTRACT gr-video-sdl/src/Makefile ourlib_LTLIBRARIES | \
 NAME=debian/gnuradio-utils.install
 rm -f $NAME
 touch $NAME
+$EXTRACT gr-utils/src/python/Makefile ourpython_PYTHON >>$NAME
 $EXTRACT gr-utils/src/python/Makefile bin_SCRIPTS >>$NAME
 
 # gnuradio-examples
@@ -185,6 +187,16 @@ $EXTRACT gnuradio-examples/python/multi-antenna/Makefile ourdata_DATA >>$NAME
 $EXTRACT gnuradio-examples/python/multi_usrp/Makefile ourdata_DATA >>$NAME
 $EXTRACT gnuradio-examples/python/network/Makefile ourdata_DATA >>$NAME
 $EXTRACT gnuradio-examples/python/usrp/Makefile ourdata_DATA >>$NAME
+
+# gnuradio-gpio
+NAME=debian/gnuradio-gpio.install
+rm -f $NAME
+touch $NAME
+$EXTRACT gr-gpio/src/python/Makefile bin_SCRIPTS >>$NAME
+$EXTRACT gr-gpio/src/python/Makefile ourpython_PYTHON >>$NAME
+$EXTRACT gr-gpio/src/lib/Makefile ourlib_LTLIBRARIES >>$NAME
+$EXTRACT gr-gpio/src/lib/Makefile ourlib_LTLIBRARIES |
+    sed -e 's/\.la$/.so/' >>$NAME
 
 # gnuradio-pager
 NAME=debian/gnuradio-pager.install
