@@ -4,6 +4,9 @@
 # Second argument is absolute path to top of component build directory
 # Third argument is component source directory for qa tests
 
+# current QA srcdir
+export srcdir=$3
+
 # Where to find my swig generated shared library
 mylibdir=$2/src:$2/src/.libs:$2/src/lib:$2/src/lib/.libs
 
