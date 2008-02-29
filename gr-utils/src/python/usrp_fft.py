@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 #
-# Copyright 2004,2005,2007 Free Software Foundation, Inc.
+# Copyright 2004,2005,2007,2008 Free Software Foundation, Inc.
 # 
 # This file is part of GNU Radio
 # 
@@ -73,6 +73,8 @@ class app_top_block(stdgui2.std_top_block):
                           help="don't use halfband filter in usrp")
         parser.add_option("-S", "--oscilloscope", action="store_true", default=False,
                           help="Enable oscilloscope display")
+	parser.add_option("", "--ref-scale", type="eng_float", default=13490.0,
+			  help="Set dBFS=0dB input value, default=[%default]")
         (options, args) = parser.parse_args()
         if len(args) != 0:
             parser.print_help()
@@ -115,7 +117,8 @@ class app_top_block(stdgui2.std_top_block):
         elif options.oscilloscope:
             self.scope = scopesink2.scope_sink_c(panel, sample_rate=input_rate)
         else:
-            self.scope = fftsink2.fft_sink_c (panel, fft_size=1024, sample_rate=input_rate, y_divs = 10)
+            self.scope = fftsink2.fft_sink_c (panel, fft_size=1024, sample_rate=input_rate, 
+					      ref_scale=options.ref_scale, ref_level=0.0, y_divs = 10)
 
         self.connect(self.u, self.scope)
 
