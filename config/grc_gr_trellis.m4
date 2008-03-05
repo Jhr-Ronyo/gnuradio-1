@@ -1,4 +1,4 @@
-dnl Copyright 2001,2002,2003,2004,2005,2006 Free Software Foundation, Inc.
+dnl Copyright 2001,2002,2003,2004,2005,2006,2008 Free Software Foundation, Inc.
 dnl 
 dnl This file is part of GNU Radio
 dnl 
@@ -18,21 +18,23 @@ dnl the Free Software Foundation, Inc., 51 Franklin Street,
 dnl Boston, MA 02110-1301, USA.
 
 AC_DEFUN([GRC_GR_TRELLIS],[
-    GRC_ENABLE([gr-trellis])
+    GRC_ENABLE(gr-trellis)
+
+    dnl Don't do gr-trellis if gnuradio-core skipped
+    GRC_CHECK_DEPENDENCY(gr-trellis, gnuradio-core)
 
     AC_CONFIG_FILES([\
-	gr-trellis/Makefile \
-	gr-trellis/doc/Makefile \
-	gr-trellis/src/Makefile \
-	gr-trellis/src/lib/Makefile \
-	gr-trellis/src/python/Makefile \
-	gr-trellis/src/python/run_tests \
-	gr-trellis/src/examples/Makefile \
-	gr-trellis/src/examples/fsm_files/Makefile
+        gr-trellis/Makefile \
+        gr-trellis/doc/Makefile \
+        gr-trellis/src/Makefile \
+        gr-trellis/src/lib/Makefile \
+        gr-trellis/src/python/Makefile \
+        gr-trellis/src/python/run_tests \
+        gr-trellis/src/examples/Makefile \
+        gr-trellis/src/examples/fsm_files/Makefile
     ])
 
-    passed=yes
-    GRC_BUILD_CONDITIONAL([gr-trellis],[
+    GRC_BUILD_CONDITIONAL(gr-trellis,[
         dnl run_tests is created from run_tests.in.  Make it executable.
 	AC_CONFIG_COMMANDS([run_tests_gr_trellis], [chmod +x gr-trellis/src/python/run_tests])
     ])

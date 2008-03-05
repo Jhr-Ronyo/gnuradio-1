@@ -1,4 +1,4 @@
-dnl Copyright 2001,2002,2003,2004,2005,2006 Free Software Foundation, Inc.
+dnl Copyright 2001,2002,2003,2004,2005,2006,2008 Free Software Foundation, Inc.
 dnl 
 dnl This file is part of GNU Radio
 dnl 
@@ -18,19 +18,30 @@ dnl the Free Software Foundation, Inc., 51 Franklin Street,
 dnl Boston, MA 02110-1301, USA.
 
 AC_DEFUN([GRC_GR_WXGUI],[
-    GRC_ENABLE([gr-wxgui])
+    GRC_ENABLE(gr-wxgui)
+
+    GRC_WITH(gr-wxgui)
+
+    dnl Don't do gr-wxgui if gnuradio-core skipped
+    GRC_CHECK_DEPENDENCY(gr-wxgui, gnuradio-core)
+
+    dnl If execution gets to here, $passed will be:
+    dnl   with : if the --with code didn't error out
+    dnl   yes  : if the --enable code passed muster and all dependencies are met
+    dnl   no   : otherwise
+    if test $passed = yes; then
+        dnl Don't do gr-wxgui if wxPython is not available
+        if ! ${PYTHON} -c 'import wx'; then
+            passed=no
+        fi
+    fi
 
     AC_CONFIG_FILES([ \
-	  gr-wxgui/Makefile \
-	  gr-wxgui/src/Makefile \
-	  gr-wxgui/src/python/Makefile \
+        gr-wxgui/Makefile \
+        gr-wxgui/gr-wxgui.pc \
+        gr-wxgui/src/Makefile \
+        gr-wxgui/src/python/Makefile \
     ])
 
-    if ${PYTHON} -c 'import wx'; then
-	passed=yes
-    else
-	passed=no
-    fi
-    
-    GRC_BUILD_CONDITIONAL([gr-wxgui])
+    GRC_BUILD_CONDITIONAL(gr-wxgui)
 ])

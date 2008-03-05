@@ -107,5 +107,5 @@ print path
 	  ;;
         esac
 
-	AC_SUBST([PYTHON_LDFLAGS])
+	AC_SUBST(PYTHON_LDFLAGS)
 ])

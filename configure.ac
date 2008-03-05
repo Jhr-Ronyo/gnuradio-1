@@ -1,4 +1,4 @@
-dnl Copyright 2001,2002,2003,2004,2005,2006,2007 Free Software Foundation, Inc.
+dnl Copyright 2001,2002,2003,2004,2005,2006,2007,2008 Free Software Foundation, Inc.
 dnl 
 dnl This file is part of GNU Radio
 dnl 
@@ -24,6 +24,20 @@ AC_CANONICAL_HOST
 AC_CANONICAL_TARGET([])
 AM_INIT_AUTOMAKE(gnuradio,3.1.1)
 AC_CONFIG_SRCDIR([gnuradio-core/src/lib/runtime/gr_vmcircbuf.cc])
+
+if test x$cross_compiling != xno; then
+  AC_MSG_NOTICE([Configuring GNU Radio for cross compilation])
+else
+  AC_MSG_NOTICE([Configuring GNU Radio for native compilation])
+fi
+
+dnl add ${prefix}/lib/pkgconfig to the head of the PKG_CONFIG_PATH
+if test [x]${PKG_CONFIG_PATH} = x; then
+    PKG_CONFIG_PATH=${prefix}/lib/pkgconfig
+else
+    PKG_CONFIG_PATH=${prefix}/lib/pkgconfig:${PKG_CONFIG_PATH}
+fi
+export PKG_CONFIG_PATH
 
 DEFINES=""
 AC_SUBST(DEFINES)
@@ -51,8 +65,8 @@ if test "$user_set_cxxflags" != yes; then
   if test "$GXX" = yes; then
     case "$host_cpu" in
     	powerpc*)
-	   # "-O1" is broken on the PPC for some reason
-	   # (at least as of g++ 4.1.1)
+	   dnl "-O1" is broken on the PPC for some reason
+	   dnl (at least as of g++ 4.1.1)
 	   swig_CXXFLAGS="-g1 -O2"
 	;;
     	*) 
@@ -63,7 +77,6 @@ if test "$user_set_cxxflags" != yes; then
 fi
 AC_SUBST(autoconf_default_CXXFLAGS)
 AC_SUBST(swig_CXXFLAGS)
-
 
 LF_SET_WARNINGS
 GR_SET_GPROF
@@ -92,7 +105,6 @@ AC_CHECK_LIB(socket,socket)
 
 dnl check for threads (mandatory)
 GR_OMNITHREAD
-#AC_SUBST(PTHREAD_CFLAGS)
 CFLAGS="${CFLAGS} $PTHREAD_CFLAGS"
 CXXFLAGS="${CXXFLAGS} $PTHREAD_CFLAGS"
 
@@ -185,6 +197,9 @@ dnl sets CPPUNIT_CFLAGS and CPPUNIT_LIBS
 AM_PATH_CPPUNIT([1.9.14],[],
 		[AC_MSG_ERROR([GNU Radio requires cppunit.  Stop])])
 
+dnl see if GUILE is installed
+AC_PATH_PROG(GUILE,guile)
+
 CPPUNIT_INCLUDES=$CPPUNIT_CFLAGS
 AC_SUBST(CPPUNIT_INCLUDES)
 
@@ -192,14 +207,29 @@ dnl Define where to find boost includes
 dnl defines BOOST_CFLAGS
 GR_REQUIRE_BOOST_INCLUDES
 
-# If this is being done from a subversion tree, create variables
+dnl If this is being done from a subversion tree, create variables
 GR_SUBVERSION
 
 dnl Component specific configuration
 dnl The order of the GR_ macros determines the order of compilation
+dnl For -any- checks on $enable_all_components
+dnl use the following guildlines:
+dnl   yes : --enable-all-components was specified, so error out if any
+dnl         components do not pass configuration checks.
+dnl   no  : --disable-all-components was specified, so try to build the
+dnl         --enable'd components, and error out if any do not pass
+dnl         configuration checks.
+dnl   ""  : this option was not specified on the command line; try to
+dnl         build all components that are not --with'd, but don't
+dnl         error out if any component does not pass configuration checks.
+dnl
+dnl For each --enable-foo component, if that flag is not specified on
+dnl the command line, the related variable $enable_foo will be set to
+dnl $enable_all_components .
+
 AC_ARG_ENABLE(
     [all-components],
-    [  --enable-all-components Build all components or stop on failed dependencies]
+    [  --enable-all-components Build all configurable components (default), or stop on failed dependencies]
 )
 
 build_dirs="config"
@@ -224,20 +254,37 @@ GRC_GR_TRELLIS
 GRC_GR_VIDEO_SDL
 GRC_GR_WXGUI
 GRC_GR_SOUNDER			dnl this must come after GRC_USRP
-GRC_GR_UTILS
+GRC_GR_UTILS                    dnl this must come after GRC_GR_WXGUI
 GRC_GNURADIO_EXAMPLES		dnl must come last
 
-# Each component is now either to be built, was skipped, or failed dependencies
+# Each component is now either to be built, was skipped, will be
+# included from pre-installed libraries and includes, or failed
+# dependencies.
 AC_SUBST([build_dirs], [$build_dirs])
 AC_SUBST([skipped_dirs], [$skipped_dirs])
- 
+AC_SUBST([with_dirs], [$with_dirs])
+
+# fix for older autotools that don't define "abs_top_YYY" by default
+AC_SUBST(abs_top_srcdir)
+AC_SUBST(abs_top_builddir)
+
+# 'with' variables - the pre-installed libraries, includes, and paths
+# - must always come last in the lists, so they require special
+# treatment.
+AC_SUBST(with_INCLUDES)
+AC_SUBST(with_SWIG_INCLUDES)
+AC_SUBST(with_PYDIRPATH)
+AC_SUBST(with_SWIGDIRPATH)
+AC_SUBST(with_LIBDIRPATH)
+
+# Local files tweaked by AC
 AC_CONFIG_FILES([\
     Makefile \
-    run_tests.sh
-    config/Makefile
+    run_tests.sh \
+    config/Makefile \
 ])
 
-dnl run_tests.sh is created from run_tests.in.sh.  Make it executable.
+dnl run_tests.sh is created from run_tests.sh.in .  Make it executable.
 AC_CONFIG_COMMANDS([run_tests_build], [chmod +x run_tests.sh])
 
 AC_OUTPUT
@@ -259,6 +306,19 @@ if test "$skipped_dirs" != ""; then
     echo to build them or they didn\'t pass configuration checks:
     echo
     for dir in $skipped_dirs
+    do
+        echo $dir
+    done
+    echo
+    echo These components will not be built.
+    echo
+fi
+if test "$with_dirs" != ""; then
+    echo "*********************************************************************"
+    echo The following components will be included from pre-installed
+    echo libraries and includes:
+    echo
+    for dir in $with_dirs
     do
         echo $dir
     done

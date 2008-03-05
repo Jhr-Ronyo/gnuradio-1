@@ -1,4 +1,4 @@
-dnl Copyright 2001,2002,2003,2004,2005,2006 Free Software Foundation, Inc.
+dnl Copyright 2001,2002,2003,2004,2005,2006,2008 Free Software Foundation, Inc.
 dnl 
 dnl This file is part of GNU Radio
 dnl 
@@ -18,19 +18,21 @@ dnl the Free Software Foundation, Inc., 51 Franklin Street,
 dnl Boston, MA 02110-1301, USA.
 
 AC_DEFUN([GRC_GR_ATSC],[
-    GRC_ENABLE([gr-atsc])
+    GRC_ENABLE(gr-atsc)
+
+    dnl Don't do gr-atsc if gnuradio-core skipped
+    GRC_CHECK_DEPENDENCY(gr-atsc, gnuradio-core)
 
     AC_CONFIG_FILES([\
-	gr-atsc/Makefile \
-	gr-atsc/doc/Makefile \
-	gr-atsc/src/Makefile \
-	gr-atsc/src/lib/Makefile \
-	gr-atsc/src/python/Makefile \
-	gr-atsc/src/python/run_tests \
+        gr-atsc/Makefile \
+        gr-atsc/doc/Makefile \
+        gr-atsc/src/Makefile \
+        gr-atsc/src/lib/Makefile \
+        gr-atsc/src/python/Makefile \
+        gr-atsc/src/python/run_tests \
     ])
 
-    passed=yes
-    GRC_BUILD_CONDITIONAL([gr-atsc],[
+    GRC_BUILD_CONDITIONAL(gr-atsc,[
         dnl run_tests is created from run_tests.in.  Make it executable.
 	AC_CONFIG_COMMANDS([run_tests_atsc], [chmod +x gr-atsc/src/python/run_tests])
     ])
