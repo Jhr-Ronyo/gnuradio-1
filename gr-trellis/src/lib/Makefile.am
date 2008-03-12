@@ -54,9 +54,36 @@ CODE_GENERATOR = 				\
 
 include Makefile.gen
 
-$(GENERATED_H) $(GENERATED_I) $(GENERATED_CC): $(CODE_GENERATOR)
-	PYTHONPATH=$(top_srcdir)/gnuradio-core/src/python \
-		srcdir=$(srcdir) $(PYTHON) $(srcdir)/generate_all.py
+
+# Ensure parallel make does the right thing.
+# http://sources.redhat.com/automake/automake.html#Multiple-Outputs
+
+STAMPS = generate-stamp
+
+generate-stamp: $(CODE_GENERATOR)
+	@rm -f generate-tmp
+	@touch generate-tmp
+	PYTHONPATH=$(top_srcdir)/gnuradio-core/src/python srcdir=$(srcdir) $(PYTHON) $(srcdir)/generate_all.py
+	@mv -f generate-tmp $@
+
+$(GENERATED_H) $(GENERATED_I) $(GENERATED_CC) trellis_generated.i : generate-stamp
+## Recover from the removal of $@
+	@if test -f $@; then :; else \
+               trap 'rm -rf generate-lock generate-stamp' 1 2 13 15; \
+               if mkdir generate-lock 2>/dev/null; then \
+## This code is being executed by the first process.
+                 rm -f generate-stamp; \
+                 $(MAKE) $(AM_MAKEFLAGS) generate-stamp; \
+                 rmdir generate-lock; \
+               else \
+## This code is being executed by the follower processes.
+## Wait until the first process is done.
+                 while test -d generate-lock; do sleep 1; done; \
+## Succeed if and only if the first process succeeded.
+                 test -f generate-stamp; exit $$?; \
+               fi; \
+             fi
+
 
 # These files are built by SWIG.  The first is the C++ glue.
 # The second is the python wrapper that loads the _trellis shared library
@@ -70,7 +97,8 @@ BUILT_SOURCES = \
 	$(GENERATED_H)		\
 	$(GENERATED_I)		\
 	$(GENERATED_CC)		\
-	$(swig_built_sources)
+	$(swig_built_sources)	\
+	trellis_generated.i	
 
 ALL_IFILES = 			\
 	$(LOCAL_IFILES)		\
@@ -83,7 +111,9 @@ LOCAL_IFILES = 			\
 	$(top_srcdir)/gr-trellis/src/lib/trellis.i			
 
 EXTRA_DIST = 			\
-	$(CODE_GENERATOR)
+	$(CODE_GENERATOR)	\
+	$(STAMPS)
+
 
 # This gets trellis.py installed in the right place
 ourpython_PYTHON =		\

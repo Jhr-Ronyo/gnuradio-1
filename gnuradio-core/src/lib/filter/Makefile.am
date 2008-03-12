@@ -62,17 +62,40 @@ CODE_GENERATOR = 					\
 	gr_freq_xlating_fir_filter_XXX.h.t		\
 	gr_freq_xlating_fir_filter_XXX.i.t
 
-
-
-# include $(srcdir)/Makefile.gen
 include Makefile.gen
 
+# Ensure parallel make does the right thing.
+# http://sources.redhat.com/automake/automake.html#Multiple-Outputs
 
-$(GENERATED_H) $(GENERATED_I) $(GENERATED_CC): $(CODE_GENERATOR)
+STAMPS = generate-stamp
+
+generate-stamp: $(CODE_GENERATOR)
+	@rm -f generate-tmp
+	@touch generate-tmp
 	PYTHONPATH=$(top_srcdir)/gnuradio-core/src/python srcdir=$(srcdir) $(PYTHON) $(srcdir)/generate_all.py
+	@mv -f generate-tmp $@
 
 
-BUILT_SOURCES = $(GENERATED_H) $(GENERATED_I) $(GENERATED_CC)
+$(GENERATED_H) $(GENERATED_I) $(GENERATED_CC) filter_generated.i: generate-stamp
+## Recover from the removal of $@
+	@if test -f $@; then :; else \
+               trap 'rm -rf generate-lock generate-stamp' 1 2 13 15; \
+               if mkdir generate-lock 2>/dev/null; then \
+## This code is being executed by the first process.
+                 rm -f generate-stamp; \
+                 $(MAKE) $(AM_MAKEFLAGS) generate-stamp; \
+                 rmdir generate-lock; \
+               else \
+## This code is being executed by the follower processes.
+## Wait until the first process is done.
+                 while test -d generate-lock; do sleep 1; done; \
+## Succeed if and only if the first process succeeded.
+                 test -f generate-stamp; exit $$?; \
+               fi; \
+             fi
+
+
+BUILT_SOURCES = $(GENERATED_H) $(GENERATED_I) $(GENERATED_CC) filter_generated.i
 
 
 # ----------------------------------------------------------------
@@ -158,7 +181,8 @@ EXTRA_libfilter_la_SOURCES =		\
 EXTRA_DIST = 					\
 	3dnow_float_dotprod_really_simple.S	\
 	3dnow_float_dotprod_simple.S		\
-	$(CODE_GENERATOR)
+	$(CODE_GENERATOR)			\
+	$(STAMPS)
 
 
 # work around automake deficiency
@@ -293,4 +317,4 @@ swiginclude_HEADERS =			\
 	$(GENERATED_I)
 
 
-CLEANFILES = $(BUILT_SOURCES) *.pyc
+CLEANFILES = $(BUILT_SOURCES) $(STAMPS) *.pyc
