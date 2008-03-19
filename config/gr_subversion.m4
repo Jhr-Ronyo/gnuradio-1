@@ -25,8 +25,8 @@ dnl
 # current repository version and last changed date.
 
 AC_DEFUN([GR_SUBVERSION],[
-    	AC_CHECK_PROG([SVN],[svn],[`which svn`])
-	if ! test -z $SVN ; then
+    	AC_PATH_PROG([SVN],[svn])
+	if test "$SVN" != "" -a -d .svn ; then
 	    SVNVERSION=`$SVN info . | grep '^Revision' | cut -f 2- -d ' '`
 	    SVNDATE=`$SVN info . | grep 'Last Changed Date' | cut -f 4-6 -d ' '`
 	fi
