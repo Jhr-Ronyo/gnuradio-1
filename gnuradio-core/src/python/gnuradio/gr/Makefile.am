@@ -61,6 +61,7 @@ noinst_PYTHON = 			\
 	qa_diff_encoder.py		\
 	qa_diff_phasor_cc.py		\
 	qa_feval.py			\
+	qa_fft.py			\
 	qa_fft_filter.py		\
 	qa_filter_delay_fc.py		\
 	qa_flow_graph.py		\
