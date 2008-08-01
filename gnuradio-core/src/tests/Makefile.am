@@ -32,10 +32,12 @@ TESTS = test_all
 
 #Test program to test setting up buffers using gr_test which can be run manually
 EXTRA_DIST = 				\
-	test_buffers.py
+	test_buffers.py \
+	benchmark_dotprod
+
 
 noinst_PROGRAMS		= 	\
-	benchmark_dotprod	\
+	benchmark_dotprod_fff	\
 	benchmark_dotprod_fsf	\
 	benchmark_dotprod_fcc	\
 	benchmark_dotprod_scc	\
@@ -50,11 +52,15 @@ noinst_PROGRAMS		= 	\
 	test_vmcircbuf
 
 
+noinst_SCRIPTS = \
+	benchmark_dotprod
+
+
 LIBGNURADIO = 	$(GNURADIO_CORE_LA)
 LIBGNURADIOQA = $(top_builddir)/gnuradio-core/src/lib/libgnuradio-core-qa.la $(LIBGNURADIO)
 
-benchmark_dotprod_SOURCES = benchmark_dotprod.cc
-benchmark_dotprod_LDADD   = $(LIBGNURADIO)
+benchmark_dotprod_fff_SOURCES = benchmark_dotprod_fff.cc
+benchmark_dotprod_fff_LDADD   = $(LIBGNURADIO)
 
 benchmark_dotprod_fsf_SOURCES = benchmark_dotprod_fsf.cc
 benchmark_dotprod_fsf_LDADD   = $(LIBGNURADIO)
