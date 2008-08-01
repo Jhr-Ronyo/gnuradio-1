@@ -56,9 +56,6 @@ public:
 
   // Dump the flowgraph to stdout
   void dump();
-
-  // Return true if flowgraph is running
-  bool is_running() const { return d_running; }
   
 private:
     
@@ -72,6 +69,8 @@ private:
   std::vector<gr_basic_block_vector_t> d_graphs;
 
   void start_threads();
+
+private:
   void restart();
 };
 
