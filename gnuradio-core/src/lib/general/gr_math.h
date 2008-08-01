@@ -82,6 +82,14 @@ static inline float gr_branchless_clip(float x, float clip)
   return 0.5*x1;
 }
 
-
+static inline float gr_clip(float x, float clip)
+{
+  float y;
+  if(x > clip)
+    y = clip;
+  else if(x < -clip)
+    y = -clip;
+  return y;
+}
 
 #endif /* _GR_MATH_H_ */
