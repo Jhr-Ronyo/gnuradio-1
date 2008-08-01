@@ -79,7 +79,7 @@ GLOB_SYMB(fcomplex_dotprod_sse):
 	jmp	.L1_test
 
 	.p2align 4
-.loop1:	
+.Loop1:	
 
 	movlps	0(%rdi), %xmm0
 	shufps	$0x50, %xmm0, %xmm0	# b01010000
@@ -90,7 +90,7 @@ GLOB_SYMB(fcomplex_dotprod_sse):
 	addps	%xmm0, %xmm4
 .L1_test:	
 	dec	%rax
-	jge	.loop1
+	jge	.Loop1
 
 	
 	# set up for primary loop which is unrolled 4 times
@@ -99,7 +99,7 @@ GLOB_SYMB(fcomplex_dotprod_sse):
 	movaps	%xmm5, %xmm7 
 
 	shr	$2, %rdx		# n_2_complex_blocks / 4
-	je	.cleanup		# if zero, take short path
+	je	.Lcleanup		# if zero, take short path
 
 	# finish setup and loop priming
 
@@ -117,7 +117,7 @@ GLOB_SYMB(fcomplex_dotprod_sse):
 	# hence enter loop at top
 
 	.p2align 4
-.loop2:
+.Loop2:
 	addps	%xmm2, %xmm6
 	movlps	0x10(%rdi), %xmm2
 
@@ -149,7 +149,7 @@ GLOB_SYMB(fcomplex_dotprod_sse):
 	add	$0x40, %rsi
 	add	$0x20, %rdi
 	dec	%rdx
-	jne	.loop2
+	jne	.Loop2
 
 	# OK, now we've done with all the multiplies, but
 	# we still need to handle the unaccumulated
@@ -168,7 +168,7 @@ GLOB_SYMB(fcomplex_dotprod_sse):
 	# At this point, xmm4 contains 2x2 partial sums.  We need
 	# to compute a "horizontal complex add" across xmm4.  
 	
-.cleanup:				# xmm4 = r1 i2 r3 i4
+.Lcleanup:				# xmm4 = r1 i2 r3 i4
 	movhlps	%xmm4, %xmm0		# xmm0 = ?? ?? r1 r2
 	addps	%xmm4, %xmm0		# xmm0 = ?? ?? r1+r3 i2+i4
 	movlps	%xmm0, (%rcx)		# store low 2x32 bits (complex) to memory

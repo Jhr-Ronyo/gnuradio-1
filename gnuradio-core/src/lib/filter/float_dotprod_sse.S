@@ -79,7 +79,7 @@ GLOB_SYMB(float_dotprod_sse):
 	jmp	.L1_test
 
 	.p2align 4
-.loop1:	
+.Loop1:	
 	movaps	(%eax), %xmm0
 	mulps	(%edx), %xmm0
 	addl	$0x10, %edx
@@ -87,7 +87,7 @@ GLOB_SYMB(float_dotprod_sse):
 	addps	%xmm0, %xmm4
 .L1_test:	
 	decl	%ecx
-	jge	.loop1
+	jge	.Loop1
 
 	
 	# set up for primary loop which is unrolled 4 times
@@ -97,7 +97,7 @@ GLOB_SYMB(float_dotprod_sse):
 	movaps	%xmm5, %xmm7 
 
 	shrl	$2, %ecx		# n_4_float_blocks / 4
-	je	.cleanup		# if zero, take short path
+	je	.Lcleanup		# if zero, take short path
 
 	# finish setup and loop priming
 
@@ -110,7 +110,7 @@ GLOB_SYMB(float_dotprod_sse):
 	# hence enter loop at top
 
 	.p2align 4
-.loop2:
+.Loop2:
 	mulps	(%edx), %xmm0
 	addps	%xmm2, %xmm6
 	movaps	0x20(%eax), %xmm2
@@ -130,7 +130,7 @@ GLOB_SYMB(float_dotprod_sse):
 	addl	$0x40, %edx
 	addl	$0x40, %eax
 	decl	%ecx
-	jne	.loop2
+	jne	.Loop2
 
 	# OK, now we've done with all the multiplies, but
 	# we still need to handle the unaccumulated
@@ -150,7 +150,7 @@ GLOB_SYMB(float_dotprod_sse):
 	# to compute a "horizontal add" across xmm4.  
 	# This is a fairly nasty operation...
 	
-.cleanup:				# xmm4 = d1 d2 d3 d4
+.Lcleanup:				# xmm4 = d1 d2 d3 d4
 	xorps	%xmm0, %xmm0		# xmm0 = 0 0 0 0  (may be unnecessary)
 	movhlps	%xmm4, %xmm0		# xmm0 = 0 0 d1 d2
 	addps	%xmm4, %xmm0		# xmm0 = d1 d2 d1+d3 d2+d4
