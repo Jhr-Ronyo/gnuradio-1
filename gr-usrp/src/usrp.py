@@ -61,6 +61,8 @@ import db_flexrf
 import db_flexrf_mimo
 import db_tv_rx
 import db_wbx
+import db_dtt754
+import db_dtt768
 
 def _look_for_usrp(which):
     """
