@@ -83,4 +83,9 @@ m4macros = \
 	usrp_libusb.m4 \
 	usrp_sdcc.m4
 
-EXTRA_DIST = $(m4macros) 
+EXTRA_DIST = $(m4macros) \
+        libtool.m4 \
+        lt~obsolete.m4 \
+        ltsugar.m4 \
+        ltversion.m4 \
+        ltoptions.m4

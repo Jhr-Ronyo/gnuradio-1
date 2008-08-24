@@ -24,6 +24,7 @@ AC_PREREQ(2.57)
 AC_CONFIG_SRCDIR([src/lib/howto.i])
 AM_CONFIG_HEADER(config.h)
 AC_CANONICAL_TARGET([])
+AC_CONFIG_AUX_DIR([.])
 AM_INIT_AUTOMAKE(gr-howto-write-a-block,3.1.3)
 
 GR_X86_64
