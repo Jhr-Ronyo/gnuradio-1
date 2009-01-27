@@ -34,7 +34,7 @@ typedef enum {
   BS_EMPTYING,
 } buffer_state_t;
 
-buffer_state_t buffer_state[NBUFFERS];
+static buffer_state_t buffer_state[NBUFFERS];
 
 bool
 dbsm_nop_inspector(dbsm_t *sm, int buf_this)

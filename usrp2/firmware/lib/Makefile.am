@@ -25,6 +25,7 @@ libu2fw_a_SOURCES = \
 	abort.c \
 	ad9510.c \
 	ad9777.c \
+	bsm12.c \
 	buffer_pool.c \
 	clocks.c \
 	db_basic.c \
@@ -62,6 +63,7 @@ noinst_HEADERS = \
 	ad9777.h \
 	ad9777_regs.h \
 	bool.h \
+	bsm12.h \
 	buffer_pool.h \
 	clocks.h \
 	db.h \
@@ -90,6 +92,6 @@ noinst_HEADERS = \
 	u2_init.h \
 	usrp2_bytesex.h \
         wb16550.h
-        
+
 EXTRA_DIST = \
         microblaze.ld

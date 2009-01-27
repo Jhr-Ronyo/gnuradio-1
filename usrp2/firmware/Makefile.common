@@ -23,7 +23,7 @@ HAL_IO = -DHAL_IO_USES_UART
 
 AM_CPPFLAGS = $(HAL_IO) $(STD_INCLUDES)
 
-STD_CFLAGS = -Wall -Werror-implicit-function-declaration -mxl-soft-div -msoft-float
+STD_CFLAGS = --std=gnu99 -Wall -Werror-implicit-function-declaration -mxl-soft-div -msoft-float
 
 AM_CFLAGS = $(STD_CFLAGS) -mxl-soft-mul -mxl-barrel-shift
 #AM_CFLAGS = $(STD_CFLAGS) -mxl-soft-mul -mxl-barrel-shift -mxl-gp-opt -G 16384
@@ -33,8 +33,9 @@ AM_CFLAGS = $(STD_CFLAGS) -mxl-soft-mul -mxl-barrel-shift
 #AM_LDFLAGS = -Wl,-T,$(LINKER_SCRIPT) -Wl,-defsym -Wl,_STACK_SIZE=1024
 #AM_LDFLAGS = -Wl,-T,$(LINKER_SCRIPT) -Wl,-Map -Wl,$@.map
 #AM_LDFLAGS = -Wl,-T,$(LINKER_SCRIPT)
-#AM_LDFLAGS = -Wl,-Map -Wl,$@.map -Wl,-defsym -Wl,_STACK_SIZE=2048
-AM_LDFLAGS = -Wl,-defsym -Wl,_STACK_SIZE=2048
+AM_LDFLAGS = -Wl,-Map -Wl,$@.map -Wl,-defsym -Wl,_STACK_SIZE=3072
+#AM_LDFLAGS = -Wl,-defsym -Wl,_STACK_SIZE=2048
+
 
 %.bin : %
 	mb-objcopy -O binary $< $@
