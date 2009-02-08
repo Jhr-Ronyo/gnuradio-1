@@ -8,16 +8,13 @@
 	<name>USRP Source</name>
 	<key>usrp_simple_source_x</key>
 	<import>from grc_gnuradio import usrp as grc_usrp</import>
-	<make>grc_usrp.simple_source_$(type.fcn)(number=$number, side='$side', rx_ant='$rx_ant')
+	<make>grc_usrp.simple_source_$(type.fcn)(which=$which, side='$side', rx_ant='$rx_ant'#if $hb_filters.eval then ', no_hb=True' else ''#)
 #if $format.eval
 self.$(id).set_format(width=$format.width, shift=$format.shift)
 #end if
 self.$(id).set_decim_rate($decimation)
 self.$(id).set_frequency($frequency, verbose=True)
-self.$(id).set_gain($gain)
-#if $auto_tr.eval and $rx_ant.flex
-self.$(id).set_auto_tr($auto_tr)
-#end if</make>
+self.$(id).set_gain($gain)</make>
 	<callback>set_decim_rate($decimation)</callback>
 	<callback>set_frequency($frequency)</callback>
 	<callback>set_gain($gain)</callback>
@@ -57,7 +54,7 @@ self.$(id).set_auto_tr($auto_tr)
 	</param>
 	<param>
 		<name>Unit Number</name>
-		<key>number</key>
+		<key>which</key>
 		<value>0</value>
 		<type>int</type>
 	</param>
@@ -117,22 +114,18 @@ self.$(id).set_auto_tr($auto_tr)
 		</option>
 	</param>
 	<param>
-		<name>Auto T/R</name>
-		<key>auto_tr</key>
+		<name>Halfband Filters</name>
+		<key>hb_filters</key>
 		<value></value>
 		<type>enum</type>
-		<hide>#if $rx_ant.flex then 'none' else 'all'#</hide>
+		<hide>#if $hb_filters.eval then 'none' else 'part'#</hide>
 		<option>
-			<name>Auto</name>
+			<name>Enable</name>
 			<key></key>
 		</option>
 		<option>
-			<name>Enable</name>
-			<key>True</key>
-		</option>
-		<option>
 			<name>Disable</name>
-			<key>False</key>
+			<key>1</key>
 		</option>
 	</param>
 	<source>
@@ -149,5 +142,9 @@ All other boards use the "RXA" setting.
 
 Flex RF boards only: If enabled, "Auto Transmit/Receive Switching" handles the preference for transmit packets vs receive packets. \
 By default, "Auto TR" is disabled.
+
+With the format set to 8 bits and the halfband filters disabled, the USRP can acheive a decimation rate of 4. \
+Disabling the halfband filters requires a special USRP firmware without halfband filters or TX paths. \
+For this reason, the USRP cannot transmit with the halfband filters disabled.
 	</doc>
 </block>
