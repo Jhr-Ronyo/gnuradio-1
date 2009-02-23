@@ -585,32 +585,24 @@ usrp_standard_rx::determine_rx_mux_value(const usrp_subdev_spec &ss)
   // classes for the selected side.
   std::vector<db_base_sptr> db = this->db(ss.side);
   
-  unsigned int subdev0_uses, subdev1_uses, uses;
+  unsigned int uses;
 
   // compute bitmasks of used A/D's
   
-  if(db[0]->is_quadrature())
-    subdev0_uses = 0x3;               // uses A/D 0 and 1
-  else
-    subdev0_uses = 0x1;               // uses A/D 0 only
-
-  if(db.size() > 1)                   // more than 1 subdevice?
-    subdev1_uses = 0x2;               // uses A/D 1 only
-  else
-    subdev1_uses = 0x0;               // uses no A/D (doesn't exist)
-  
-  if(ss.subdev == 0)
-    uses = subdev0_uses;
+  if(db[ss.subdev]->is_quadrature())
+    uses = 0x3;               // uses A/D 0 and 1
+  else if (ss.subdev == 0)
+    uses = 0x1;               // uses A/D 0 only
   else if(ss.subdev == 1)
-    uses = subdev1_uses;
+    uses = 0x2;               // uses A/D 1 only
   else
-    throw std::invalid_argument("subdev_spec");
-
+    uses = 0x0;               // uses no A/D (doesn't exist)
+  
   if(uses == 0){
-    throw std::runtime_error("Daughterboard doesn't have a subdevice 1");
+    throw std::runtime_error("Determine RX Mux Error");
   }
   
-  bool swap_iq = db[0]->i_and_q_swapped();
+  bool swap_iq = db[ss.subdev]->i_and_q_swapped();
   
   truth_table_element truth_table[8] = {
     // (side, uses, swap_iq) : mux_val
@@ -635,7 +627,19 @@ usrp_standard_rx::determine_rx_mux_value(const usrp_subdev_spec &ss)
   throw std::runtime_error("internal error");
 }
 
-
+int
+usrp_standard_rx::determine_rx_mux_value(const usrp_subdev_spec &ss_a, const usrp_subdev_spec &ss_b)
+{
+  std::vector<db_base_sptr> db_a = this->db(ss_a.side);
+  std::vector<db_base_sptr> db_b = this->db(ss_b.side);
+  if (db_a[ss_a.subdev]->is_quadrature() != db_b[ss_b.subdev]->is_quadrature()){
+    throw std::runtime_error("Cannot compute dual mux when mixing quadrature and non-quadrature subdevices");
+  }
+  int mux_a = determine_rx_mux_value(ss_a);
+  int mux_b = determine_rx_mux_value(ss_b);
+  //move the lower byte of the mux b into the second byte of the mux a
+  return ((mux_b & 0xff) << 8) | (mux_a & 0xffff00ff);
+}
 
 bool
 usrp_standard_rx::set_rx_freq (int channel, double freq)
@@ -959,7 +963,7 @@ usrp_standard_tx::determine_tx_mux_value(const usrp_subdev_spec &ss)
 
   std::vector<db_base_sptr> db = this->db(ss.side);
   
-  if(db[0]->i_and_q_swapped()) {
+  if(db[ss.subdev]->i_and_q_swapped()) {
     unsigned int mask[2] = {0x0089, 0x8900};
     return mask[ss.side];
   }
@@ -969,7 +973,20 @@ usrp_standard_tx::determine_tx_mux_value(const usrp_subdev_spec &ss)
   }
 }
 
-
+int
+usrp_standard_tx::determine_tx_mux_value(const usrp_subdev_spec &ss_a, const usrp_subdev_spec &ss_b)
+{
+  if (ss_a.side == ss_b.side && ss_a.subdev == ss_b.subdev){
+    throw std::runtime_error("Cannot compute dual mux, repeated subdevice");
+  }
+  int mux_a = determine_tx_mux_value(ss_a);
+  //Get the mux b:
+  //	DAC0 becomes DAC2
+  //	DAC1 becomes DAC3
+  unsigned int mask[2] = {0x0022, 0x2200};
+  int mux_b = determine_tx_mux_value(ss_b) + mask[ss_b.side];
+  return mux_b | mux_a;
+}
 
 #ifdef USE_FPGA_TX_CORDIC
 

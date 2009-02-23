@@ -27,13 +27,11 @@ from gnuradio import gr, usrp
 class _dual_source(gr.hier_block2):
 	"""A dual usrp source of IO type short or complex."""
 
-	def __init__(self, which, side_a='A', rx_ant_a='RXA', side_b='B', rx_ant_b='RXA'):
+	def __init__(self, which, rx_ant_a='RXA', rx_ant_b='RXA'):
 		"""
 		USRP dual source contructor.
 		@param which the unit number
-		@param side_a A or B
 		@param rx_ant_a the antenna choice
-		@param side_b A or B
 		@param rx_ant_b the antenna choice
 		"""
 		#initialize hier2 block
@@ -44,16 +42,11 @@ class _dual_source(gr.hier_block2):
 		)
 		#create usrp object
 		self._make_usrp(which=which, nchan=2)
-		#get the mux for output A
-		subdev_spec_a = common.to_spec(side_a, rx_ant_a)
-		self._subdev_a = usrp.selected_subdev(self._get_u(), subdev_spec_a)
-		mux_a = usrp.determine_rx_mux_value(self._get_u(), subdev_spec_a)
-		#get the mux for output B
-		subdev_spec_b = common.to_spec(side_b, rx_ant_b)
-		self._subdev_b = usrp.selected_subdev(self._get_u(), subdev_spec_b)
-		mux_b = usrp.determine_rx_mux_value(self._get_u(), subdev_spec_b)
-		#move the lower byte of the mux b into the second byte of the mux a
-		self._get_u().set_mux(((mux_b & 0xff) << 8) | (mux_a - (mux_a & 0xff00)))
+		subdev_spec_a = common.to_spec('A', rx_ant_a)
+		subdev_spec_b = common.to_spec('B', rx_ant_b)
+		self._get_u().set_mux(self._get_u().determine_rx_mux_value(subdev_spec_a, subdev_spec_b))
+		self._subdev_a = self._get_u().selected_subdev(subdev_spec_a)
+		self._subdev_b = self._get_u().selected_subdev(subdev_spec_b)
 		#connect
 		deinter = gr.deinterleave(self._get_io_size())
 		self.connect(self._get_u(), deinter)
@@ -99,16 +92,11 @@ class _dual_sink(gr.hier_block2):
 		)
 		#create usrp object
 		self._make_usrp(which=which, nchan=2)
-		#get the mux for side A
 		subdev_spec_a = common.to_spec('A')
-		self._subdev_a = usrp.selected_subdev(self._get_u(), subdev_spec_a)
-		mux_a = usrp.determine_tx_mux_value(self._get_u(), subdev_spec_a)
-		#get the mux for side B
 		subdev_spec_b = common.to_spec('B')
-		self._subdev_b = usrp.selected_subdev(self._get_u(), subdev_spec_b)
-		mux_b = usrp.determine_tx_mux_value(self._get_u(), subdev_spec_b)
-		#set the mux
-		self._get_u().set_mux(mux_a | mux_b)
+		self._get_u().set_mux(self._get_u().determine_tx_mux_value(subdev_spec_a, subdev_spec_b))
+		self._subdev_a = self._get_u().selected_subdev(subdev_spec_a)
+		self._subdev_b = self._get_u().selected_subdev(subdev_spec_b)
 		#connect
 		inter = gr.interleave(self._get_io_size())
 		self.connect(inter, self._get_u())
