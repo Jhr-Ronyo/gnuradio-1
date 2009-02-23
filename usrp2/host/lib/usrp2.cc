@@ -160,6 +160,12 @@ namespace usrp2 {
     return d_impl->mac_addr();
   }
 
+  std::string
+  usrp2::interface_name()
+  {
+    return d_impl->interface_name();
+  }
+
   // Receive
 
   bool 
