@@ -15,6 +15,7 @@ SpectrumDisplayForm::SpectrumDisplayForm(QWidget* parent) : QDialog(parent){
   _waterfallDisplayPlot = new WaterfallDisplayPlot(Tab2PlotDisplayFrame);
   _waterfall3DDisplayPlot = new Waterfall3DDisplayPlot(Waterfall3DPlotDisplayFrame);
   _timeDomainDisplayPlot = new TimeDomainDisplayPlot(TimeDomainDisplayFrame);
+  _constellationDisplayPlot = new ConstellationDisplayPlot(ConstellationDisplayFrame);
   _numRealDataPoints = 1024;
   _realFFTDataPoints = new double[_numRealDataPoints];
   _averagedValues = new double[_numRealDataPoints];
@@ -42,8 +43,10 @@ SpectrumDisplayForm::SpectrumDisplayForm(QWidget* parent) : QDialog(parent){
   
   _noiseFloorAmplitude = -HUGE_VAL;
   
-  connect(_waterfallDisplayPlot, SIGNAL(UpdatedLowerIntensityLevel(const double)), _frequencyDisplayPlot, SLOT(SetLowerIntensityLevel(const double)));
-  connect(_waterfallDisplayPlot, SIGNAL(UpdatedUpperIntensityLevel(const double)), _frequencyDisplayPlot, SLOT(SetUpperIntensityLevel(const double)));
+  connect(_waterfallDisplayPlot, SIGNAL(UpdatedLowerIntensityLevel(const double)), 
+	  _frequencyDisplayPlot, SLOT(SetLowerIntensityLevel(const double)));
+  connect(_waterfallDisplayPlot, SIGNAL(UpdatedUpperIntensityLevel(const double)), 
+	  _frequencyDisplayPlot, SLOT(SetUpperIntensityLevel(const double)));
   
   _frequencyDisplayPlot->SetLowerIntensityLevel(-200);
   _frequencyDisplayPlot->SetUpperIntensityLevel(-200);
@@ -72,7 +75,9 @@ SpectrumDisplayForm::~SpectrumDisplayForm(){
   delete _historyVector;
 }
 
-void SpectrumDisplayForm::setSystem( SpectrumGUIClass * newSystem, const uint64_t numFFTDataPoints, const uint64_t numTimeDomainDataPoints )
+void SpectrumDisplayForm::setSystem( SpectrumGUIClass * newSystem, 
+				     const uint64_t numFFTDataPoints, 
+				     const uint64_t numTimeDomainDataPoints )
 {
   ResizeBuffers(numFFTDataPoints, numTimeDomainDataPoints);
   
@@ -123,7 +128,8 @@ void SpectrumDisplayForm::newFrequencyData( const SpectrumUpdateEvent* spectrumU
     _AverageHistory(_realFFTDataPoints);
 
     double sumMean;
-    const double fft_bin_size = (_stopFrequency-_startFrequency) / static_cast<double>(numFFTDataPoints);
+    const double fft_bin_size = (_stopFrequency-_startFrequency) /
+      static_cast<double>(numFFTDataPoints);
 
     // find the peak, sum (for mean), etc
     _peakAmplitude = -HUGE_VAL;
@@ -161,14 +167,25 @@ void SpectrumDisplayForm::newFrequencyData( const SpectrumUpdateEvent* spectrumU
   }
 
   if(lastOfMultipleUpdatesFlag){
-    _frequencyDisplayPlot->PlotNewData(_averagedValues, numFFTDataPoints, _noiseFloorAmplitude, _peakFrequency, _peakAmplitude);
-    _timeDomainDisplayPlot->PlotNewData(realTimeDomainDataPoints, imagTimeDomainDataPoints, numTimeDomainDataPoints);
+    _frequencyDisplayPlot->PlotNewData(_averagedValues, numFFTDataPoints, 
+				       _noiseFloorAmplitude, _peakFrequency, 
+				       _peakAmplitude);
+    _timeDomainDisplayPlot->PlotNewData(realTimeDomainDataPoints, 
+					imagTimeDomainDataPoints, 
+					numTimeDomainDataPoints);
+    _constellationDisplayPlot->PlotNewData(realTimeDomainDataPoints, 
+					   imagTimeDomainDataPoints, 
+					   numTimeDomainDataPoints);
   }
   // Don't update the repeated data for the waterfall
   if(!repeatDataFlag){
-    _waterfallDisplayPlot->PlotNewData(_realFFTDataPoints, numFFTDataPoints, timePerFFT, dataTimestamp, spectrumUpdateEvent->getDroppedFFTFrames());
+    _waterfallDisplayPlot->PlotNewData(_realFFTDataPoints, numFFTDataPoints, 
+				       timePerFFT, dataTimestamp, 
+				       spectrumUpdateEvent->getDroppedFFTFrames());
     if( _openGLWaterfall3DFlag == 1 ){
-      _waterfall3DDisplayPlot->PlotNewData(_realFFTDataPoints, numFFTDataPoints, timePerFFT, dataTimestamp, spectrumUpdateEvent->getDroppedFFTFrames());
+      _waterfall3DDisplayPlot->PlotNewData(_realFFTDataPoints, numFFTDataPoints, 
+					   timePerFFT, dataTimestamp, 
+					   spectrumUpdateEvent->getDroppedFFTFrames());
     }
   }
   
@@ -187,45 +204,104 @@ void SpectrumDisplayForm::resizeEvent( QResizeEvent *e )
   QWidget::resizeEvent(&et);
 
   // Tell the Tab Window to Resize
-  SpectrumTypeTab->resize( e->size().width(), SpectrumTypeTab->height());
+  SpectrumTypeTab->resize( e->size().width(), e->size().height()-60);
 
   // Tell the TabXFreqDisplay to resize
-  Tab1PlotDisplayFrame->resize(e->size().width()-4, Tab1PlotDisplayFrame->height());
-  Tab2PlotDisplayFrame->resize(e->size().width()-4, Tab2PlotDisplayFrame->height());
-  Waterfall3DPlotDisplayFrame->resize(e->size().width()-4, Waterfall3DPlotDisplayFrame->height());
-  TimeDomainDisplayFrame->resize(e->size().width()-4, TimeDomainDisplayFrame->height());
-  _frequencyDisplayPlot->resize( Tab1PlotDisplayFrame->width()-4, Tab1PlotDisplayFrame->height());
-  _waterfallDisplayPlot->resize( Tab2PlotDisplayFrame->width()-4, Tab2PlotDisplayFrame->height());
-  _waterfall3DDisplayPlot->resize( Waterfall3DPlotDisplayFrame->width()-4, Waterfall3DPlotDisplayFrame->height());
-  _timeDomainDisplayPlot->resize( TimeDomainDisplayFrame->width()-4, TimeDomainDisplayFrame->height());
+  //Tab1PlotDisplayFrame->resize(e->size().width()-4,
+  //Tab1PlotDisplayFrame->height());
+  Tab1PlotDisplayFrame->resize(e->size().width()-4,
+			       e->size().height()-140);
+  Tab2PlotDisplayFrame->resize(e->size().width()-4,
+			       e->size().height()-140);
+  Waterfall3DPlotDisplayFrame->resize(e->size().width()-4,
+				      e->size().height()-140);
+  TimeDomainDisplayFrame->resize(e->size().width()-4,
+				 e->size().height()-140);
+  ConstellationDisplayFrame->resize(e->size().width()-4,
+				    e->size().height()-140);
+  _frequencyDisplayPlot->resize( Tab1PlotDisplayFrame->width()-4,
+				 e->size().height()-140);
+  _waterfallDisplayPlot->resize( Tab2PlotDisplayFrame->width()-4,
+				 e->size().height()-140);
+  _waterfall3DDisplayPlot->resize( Waterfall3DPlotDisplayFrame->width()-4,
+				   e->size().height()-140);
+  _timeDomainDisplayPlot->resize( TimeDomainDisplayFrame->width()-4,
+				  e->size().height()-140);
+  _constellationDisplayPlot->resize( TimeDomainDisplayFrame->width()-4,
+				     e->size().height()-140);
 
   // Move the IntensityWheels and Labels
-  WaterfallMaximumIntensityLabel->move(width() - 5 - WaterfallMaximumIntensityLabel->width(), WaterfallMaximumIntensityLabel->y());
-  WaterfallMinimumIntensityLabel->move(width() - 5 - WaterfallMinimumIntensityLabel->width(), WaterfallMinimumIntensityLabel->y());
-  WaterfallMaximumIntensityWheel->resize(WaterfallMaximumIntensityLabel->x() - 5 - WaterfallMaximumIntensityWheel->x(), WaterfallMaximumIntensityWheel->height());
-  WaterfallMinimumIntensityWheel->resize(WaterfallMinimumIntensityLabel->x() - 5 - WaterfallMinimumIntensityWheel->x(), WaterfallMinimumIntensityWheel->height());
+  WaterfallMaximumIntensityLabel->move(width() - 5 -
+				       WaterfallMaximumIntensityLabel->width(),
+				       WaterfallMaximumIntensityLabel->y());
+  WaterfallMaximumIntensityWheel->resize(WaterfallMaximumIntensityLabel->x() - 5 -
+					 WaterfallMaximumIntensityWheel->x(),
+					 WaterfallMaximumIntensityWheel->height());
 
-  Waterfall3DMaximumIntensityLabel->move(width() - 5 - Waterfall3DMaximumIntensityLabel->width(), Waterfall3DMaximumIntensityLabel->y());
-  Waterfall3DMinimumIntensityLabel->move(width() - 5 - Waterfall3DMinimumIntensityLabel->width(), Waterfall3DMinimumIntensityLabel->y());
-  Waterfall3DMaximumIntensityWheel->resize(Waterfall3DMaximumIntensityLabel->x() - 5 - Waterfall3DMaximumIntensityWheel->x(), Waterfall3DMaximumIntensityWheel->height());
-  Waterfall3DMinimumIntensityWheel->resize(Waterfall3DMinimumIntensityLabel->x() - 5 - Waterfall3DMinimumIntensityWheel->x(), Waterfall3DMinimumIntensityWheel->height());
+  WaterfallMinimumIntensityLabel->move(width() - 5 -
+				       WaterfallMinimumIntensityLabel->width(),
+				       height() - 115);
+  WaterfallMinimumIntensityWheel->resize(WaterfallMinimumIntensityLabel->x() - 5 -
+					 WaterfallMinimumIntensityWheel->x(),
+					 WaterfallMaximumIntensityWheel->height());
+  WaterfallMinimumIntensityWheel->move(WaterfallMinimumIntensityWheel->x(),
+				       height() - 115);
 
+  Waterfall3DMaximumIntensityLabel->move(width() - 5 -
+					 Waterfall3DMaximumIntensityLabel->width(),
+					 Waterfall3DMaximumIntensityLabel->y());
+  Waterfall3DMaximumIntensityWheel->resize(Waterfall3DMaximumIntensityLabel->x() - 5 -
+					   Waterfall3DMaximumIntensityWheel->x(),
+					   Waterfall3DMaximumIntensityWheel->height());
 
-  // Move the Power Lbl
-  PowerLabel->move(e->size().width()-(415-324) - PowerLabel->width(), PowerLabel->y());
+  Waterfall3DMinimumIntensityLabel->move(width() - 5 -
+					 Waterfall3DMinimumIntensityLabel->width(),
+					 height() - 115);
+  Waterfall3DMinimumIntensityWheel->resize(Waterfall3DMinimumIntensityLabel->x() - 5 -
+					   Waterfall3DMinimumIntensityWheel->x(),
+					   Waterfall3DMaximumIntensityWheel->height());
+  Waterfall3DMinimumIntensityWheel->move(Waterfall3DMinimumIntensityWheel->x(),
+					 height() - 115);
 
-  // Move the Power Line Edit
-  PowerLineEdit->move(e->size().width()-(415-318) - PowerLineEdit->width(), PowerLineEdit->y());
+  // Move Waterfall and Waterfall3D Auto Scan button
+  WaterfallAutoScaleBtn->move(WaterfallAutoScaleBtn->x(),
+			      e->size().height()-115);
+  Waterfall3DAutoScaleBtn->move(WaterfallAutoScaleBtn->x(),
+			      e->size().height()-115);
+  
 
-  // Move the Avg Lbl
-  AvgLabel->move(e->size().width()-(415-406) - AvgLabel->width(), AvgLabel->y());
+  // Move the Power Lbl and Line Edit
+  PowerLabel->move(e->size().width()-(415-324) - PowerLabel->width(),
+		   e->size().height()-135);
+  PowerLineEdit->move(e->size().width()-(415-318) - PowerLineEdit->width(),
+		      e->size().height()-115);
 
-  // Move the Avg Line Edit
-  AvgLineEdit->move(e->size().width()-(415-400) - AvgLineEdit->width(), AvgLineEdit->y());
+  // Move the Avg Lbl and Line Edit
+  AvgLabel->move(e->size().width()-(415-406) - AvgLabel->width(),
+		   e->size().height()-135);
+  AvgLineEdit->move(e->size().width()-(415-400) - AvgLineEdit->width(),
+		    e->size().height()-115);
+
+  // Move Max and Min check boxes
+  MaxHoldCheckBox->move(MaxHoldCheckBox->x(),
+			e->size().height()-135);
+  MaxHoldResetBtn->move(MaxHoldResetBtn->x(),
+			e->size().height()-135);
+  MinHoldCheckBox->move(MinHoldCheckBox->x(),
+			e->size().height()-115);
+  MinHoldResetBtn->move(MinHoldResetBtn->x(),
+			e->size().height()-115);
   
   // Move the FFT Size Combobox and label
-  FFTSizeComboBox->move(width() - 5 - FFTSizeComboBox->width(), FFTSizeComboBox->y());
-  FFTSizeLabel->move(width() - 10 - FFTSizeComboBox->width() - FFTSizeLabel->width(), FFTSizeLabel->y());
+  FFTSizeComboBox->move(width() - 5 - FFTSizeComboBox->width(),
+			height()-50);
+  FFTSizeLabel->move(width() - 10 - FFTSizeComboBox->width() - FFTSizeLabel->width(),
+		     height()-50);
+
+  // Move the lower check and combo boxes
+  UseRFFrequenciesCheckBox->move(UseRFFrequenciesCheckBox->x(), height()-50);
+  WindowLbl->move(WindowLbl->x(), height()-25);
+  WindowComboBox->move(WindowComboBox->x(), height()-25);
 }
 
 

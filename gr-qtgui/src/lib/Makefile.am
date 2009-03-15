@@ -54,6 +54,7 @@ QMAKE_SOURCES = 				\
 	TimeDomainDisplayPlot_moc.cc		\
 	WaterfallDisplayPlot_moc.cc		\
 	Waterfall3DDisplayPlot_moc.cc		\
+	ConstellationDisplayPlot_moc.cc		\
 	spectrumdisplayform_ui.h
 endif
 
@@ -76,12 +77,13 @@ lib_LTLIBRARIES = libqtgui.la
 
 # These are the source files that go into the shared library
 libqtgui_la_SOURCES = 	\
-	spectrumdisplayform.cc			\
 	FrequencyDisplayPlot.cc 		\
 	TimeDomainDisplayPlot.cc		\
 	WaterfallDisplayPlot.cc			\
 	Waterfall3DDisplayPlot.cc		\
 	waterfallGlobalData.cc			\
+	ConstellationDisplayPlot.cc		\
+	spectrumdisplayform.cc			\
 	SpectrumGUIClass.cc			\
 	spectrumUpdateEvents.cc			\
 	plot_waterfall.cc			\
@@ -95,15 +97,16 @@ _qtgui_la_SOURCES = 			\
 
 # These headers get installed in ${prefix}/include/gnuradio
 grinclude_HEADERS =			\
-	spectrumdisplayform.h		\
 	FrequencyDisplayPlot.h		\
 	TimeDomainDisplayPlot.h		\
 	WaterfallDisplayPlot.h		\
 	Waterfall3DDisplayPlot.h	\
-	SpectrumGUIClass.h		\
 	waterfallGlobalData.h		\
+	ConstellationDisplayPlot.h	\
 	highResTimeFunctions.h		\
 	plot_waterfall.h		\
+	spectrumdisplayform.h		\
+	SpectrumGUIClass.h		\
 	spectrumUpdateEvents.h		\
 	qtgui.h				\
 	qtgui_sink_c.h			\
