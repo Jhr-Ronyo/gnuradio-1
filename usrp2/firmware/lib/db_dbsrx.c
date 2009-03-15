@@ -22,6 +22,7 @@
 #include <memory_map.h>
 #include <clocks.h>
 #include <stdio.h>
+#include <hal_io.h>
 
 #define min(X,Y) ((X) < (Y) ? (X) : (Y))
 #define max(X,Y) ((X) > (Y) ? (X) : (Y))
@@ -109,6 +110,7 @@ db_dbsrx_init(struct db_base *dbb){
   struct db_dbsrx_dummy *db = (struct db_dbsrx_dummy *) dbb;
   db->base.set_gain(dbb, (db->base.gain_max + db->base.gain_min)/2);
   clocks_enable_rx_dboard(true, REFCLK_DIVISOR);  // Gives 4 MHz clock
+
   return true;
 }
 
