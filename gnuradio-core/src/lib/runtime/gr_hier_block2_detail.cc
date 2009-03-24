@@ -1,5 +1,5 @@
 /*
- * Copyright 2006,2007 Free Software Foundation, Inc.
+ * Copyright 2006,2007,2009 Free Software Foundation, Inc.
  * 
  * This file is part of GNU Radio
  * 
@@ -33,10 +33,24 @@
 gr_hier_block2_detail::gr_hier_block2_detail(gr_hier_block2 *owner) :
   d_owner(owner), 
   d_parent_detail(0),
-  d_fg(gr_make_flowgraph()),
-  d_inputs(owner->input_signature()->max_streams()),
-  d_outputs(owner->output_signature()->max_streams())
+  d_fg(gr_make_flowgraph())
 {
+  int min_inputs = owner->input_signature()->min_streams();
+  int max_inputs = owner->input_signature()->max_streams();
+  int min_outputs = owner->output_signature()->min_streams();
+  int max_outputs = owner->output_signature()->max_streams();
+
+  if (max_inputs == gr_io_signature::IO_INFINITE ||
+      max_outputs == gr_io_signature::IO_INFINITE ||
+      (min_inputs != max_inputs) ||(min_outputs != max_outputs) ) {
+    std::stringstream msg;
+    msg << "Hierarchical blocks do not yet support arbitrary or"
+	<< " variable numbers of inputs or outputs (" << d_owner->name() << ")";
+    throw std::runtime_error(msg.str());
+  }
+
+  d_inputs = gr_endpoint_vector_t(max_inputs);
+  d_outputs = gr_endpoint_vector_t(max_outputs);
 }
 
 gr_hier_block2_detail::~gr_hier_block2_detail()
@@ -267,11 +281,23 @@ gr_hier_block2_detail::resolve_port(int port, bool is_input)
       throw std::runtime_error(msg.str());
     }
 
+    if (d_inputs[port] == gr_endpoint()) {
+      msg << "hierarchical block '" << d_owner->name() << "' input " << port
+	  << " is not connected internally";
+      throw std::runtime_error(msg.str());
+    }
+
     result = resolve_endpoint(d_inputs[port], true);
   }
   else {
     if (port < 0 || port >= (signed)d_outputs.size()) {
       msg << "resolve_port: output " << port << " is out of range";
+      throw std::runtime_error(msg.str());
+    }
+
+    if (d_outputs[port] == gr_endpoint()) {
+      msg << "hierarchical block '" << d_owner->name() << "' output " << port
+	  << " is not connected internally";
       throw std::runtime_error(msg.str());
     }
 
