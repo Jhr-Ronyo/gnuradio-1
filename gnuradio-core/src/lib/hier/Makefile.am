@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 #
 # Copyright 2009 Free Software Foundation, Inc.
 # 
@@ -20,7 +19,19 @@
 # Boston, MA 02110-1301, USA.
 # 
 
-from gnuradio import gr
+include $(top_srcdir)/Makefile.common
 
-# This block is now a C++ hierarchical block, gr.channel_model
-channel_model = gr.channel_model
+
+AM_CPPFLAGS = $(STD_DEFINES_AND_INCLUDES) $(WITH_INCLUDES)
+
+noinst_LTLIBRARIES = libhier.la
+
+libhier_la_SOURCES = \
+	gr_channel_model.cc
+
+grinclude_HEADERS = \
+	gr_channel_model.h
+
+swiginclude_HEADERS = \
+	hier.i \
+	gr_channel_model.i
