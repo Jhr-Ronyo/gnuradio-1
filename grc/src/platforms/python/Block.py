@@ -19,7 +19,6 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA
 
 from .. base.Block import Block as _Block
 from utils import extract_docs
-from ... import utils
 
 class Block(_Block):
 
@@ -36,11 +35,11 @@ class Block(_Block):
 		@return block a new block
 		"""
 		#grab the data
-		doc = utils.exists_or_else(n, 'doc', '')
-		imports = map(lambda i: i.strip(), utils.listify(n, 'import'))
-		make = n['make']
-		checks = utils.listify(n, 'check')
-		callbacks = utils.listify(n, 'callback')
+		doc = n.find('doc') or ''
+		imports = map(lambda i: i.strip(), n.findall('import'))
+		make = n.find('make')
+		checks = n.findall('check')
+		callbacks = n.findall('callback')
 		#build the block
 		_Block.__init__(
 			self,
@@ -111,19 +110,21 @@ class Block(_Block):
 		@return true for change
 		"""
 		changed = False
-		for ports in (self.get_sinks(), self.get_sources()):
-			if ports and ports[0].get_nports():
-				#find the param that controls port0
-				for param in self.get_params():
-					if not param.is_enum() and param.get_key() in ports[0]._nports:
-						#try to increment the port controller by direction
-						try:
-							value = param.evaluate()
-							value = value + direction
-							assert 0 < value
-							param.set_value(value)
-							changed = True
-						except: pass
+		#concat the nports string from the private nports settings of both port0
+		nports_str = \
+			(self.get_sinks() and self.get_sinks()[0]._nports or '') + \
+			(self.get_sources() and self.get_sources()[0]._nports or '')
+		#modify all params whose keys appear in the nports string
+		for param in self.get_params():
+			if param.is_enum() or param.get_key() not in nports_str: continue
+			#try to increment the port controller by direction
+			try:
+				value = param.evaluate()
+				value = value + direction
+				assert 0 < value
+				param.set_value(value)
+				changed = True
+			except: pass
 		return changed
 
 	def get_doc(self):

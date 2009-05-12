@@ -8,13 +8,17 @@
 	<name>USRP Source</name>
 	<key>usrp_simple_source_x</key>
 	<import>from grc_gnuradio import usrp as grc_usrp</import>
-	<make>grc_usrp.simple_source_$(type.fcn)(which=$which, side='$side', rx_ant='$rx_ant'#if $hb_filters.eval then ', no_hb=True' else ''#)
-#if $format.eval
+	<make>grc_usrp.simple_source_$(type.fcn)(which=$which, side=$side, rx_ant=$rx_ant#if $hb_filters() then ', no_hb=True' else ''#)
+#if $format()
 self.$(id).set_format(width=$format.width, shift=$format.shift)
 #end if
 self.$(id).set_decim_rate($decimation)
 self.$(id).set_frequency($frequency, verbose=True)
-self.$(id).set_gain($gain)</make>
+self.$(id).set_gain($gain)
+#if $lo_offset() != float('inf')
+self.$(id).set_lo_offset($lo_offset)
+#end if</make>
+	<callback>set_lo_offset($lo_offset)</callback>
 	<callback>set_decim_rate($decimation)</callback>
 	<callback>set_frequency($frequency)</callback>
 	<callback>set_gain($gain)</callback>
@@ -38,7 +42,7 @@ self.$(id).set_gain($gain)</make>
 		<key>format</key>
 		<value></value>
 		<type>enum</type>
-		<hide>#if $format.eval then '' else 'part'#</hide>
+		<hide>#if $format() then '' else 'part'#</hide>
 		<option>
 			<name>16 Bits (Default)</name>
 			<key></key>
@@ -64,26 +68,38 @@ self.$(id).set_gain($gain)</make>
 		<type>int</type>
 	</param>
 	<param>
-		<name>Frequency</name>
+		<name>Frequency (Hz)</name>
 		<key>frequency</key>
 		<type>real</type>
 	</param>
 	<param>
-		<name>Gain</name>
+		<name>LO Offset (Hz)</name>
+		<key>lo_offset</key>
+		<value>float('inf')</value>
+		<type>real</type>
+		<hide>#if $lo_offset() == float('inf') then 'part' else 'none'#</hide>
+		<option>
+			<name>Default</name>
+			<key>float('inf')</key>
+		</option>
+	</param>
+	<param>
+		<name>Gain (dB)</name>
 		<key>gain</key>
+		<value>0</value>
 		<type>real</type>
 	</param>
 	<param>
 		<name>Side</name>
 		<key>side</key>
 		<value>A</value>
-		<type>enum</type>
+		<type>string</type>
 		<option>
-			<name>Side A</name>
+			<name>A</name>
 			<key>A</key>
 		</option>
 		<option>
-			<name>Side B</name>
+			<name>B</name>
 			<key>B</key>
 		</option>
 	</param>
@@ -91,7 +107,7 @@ self.$(id).set_gain($gain)</make>
 		<name>RX Antenna</name>
 		<key>rx_ant</key>
 		<value>RXA</value>
-		<type>enum</type>
+		<type>string</type>
 		<option>
 			<name>RXA</name>
 			<key>RXA</key>
@@ -118,7 +134,7 @@ self.$(id).set_gain($gain)</make>
 		<key>hb_filters</key>
 		<value></value>
 		<type>enum</type>
-		<hide>#if $hb_filters.eval then 'none' else 'part'#</hide>
+		<hide>#if $hb_filters() then 'none' else 'part'#</hide>
 		<option>
 			<name>Enable</name>
 			<key></key>

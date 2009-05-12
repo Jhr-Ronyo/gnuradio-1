@@ -1,5 +1,5 @@
 """
-Copyright 2008 Free Software Foundation, Inc.
+Copyright 2008, 2009 Free Software Foundation, Inc.
 This file is part of GNU Radio
 
 GNU Radio Companion is free software; you can redistribute it and/or
@@ -17,7 +17,6 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA
 """
 
-from ... import utils
 from ... utils import odict
 from Element import Element
 from Block import Block
@@ -32,12 +31,10 @@ class FlowGraph(Element):
 		@param platform a platforms with blocks and contrcutors
 		@return the flow graph object
 		"""
-		#hold connections and blocks
-		self._elements = list()
 		#initialize
 		Element.__init__(self, platform)
 		#inital blank import
-		self.import_data({'flow_graph': {}})
+		self.import_data()
 
 	def _get_unique_id(self, base_id=''):
 		"""
@@ -74,18 +71,14 @@ class FlowGraph(Element):
 	def get_elements(self):
 		"""
 		Get a list of all the elements.
-		Always ensure that the options block is in the list.
+		Always ensure that the options block is in the list (only once).
 		@return the element list
 		"""
-		if self._options_block not in self._elements: self._elements.append(self._options_block)
-		#ensure uniqueness of the elements list
-		element_set = set()
-		element_list = list()
-		for element in self._elements:
-			if element not in element_set: element_list.append(element)
-			element_set.add(element)
-		#store cleaned up list
-		self._elements = element_list
+		options_block_count = self._elements.count(self._options_block)
+		if not options_block_count:
+			self._elements.append(self._options_block)
+		for i in range(options_block_count-1):
+			self._elements.remove(self._options_block)
 		return self._elements
 
 	def get_enabled_blocks(self):
@@ -143,9 +136,7 @@ class FlowGraph(Element):
 		#remove block, remove all involved connections
 		if element.is_block():
 			for port in element.get_ports():
-				map(lambda c: self.remove_element(c), port.get_connections())
-		#remove a connection
-		elif element.is_connection(): pass
+				map(self.remove_element, port.get_connections())
 		self.get_elements().remove(element)
 
 	def evaluate(self, expr):
@@ -162,7 +153,7 @@ class FlowGraph(Element):
 		All connections and blocks must be valid.
 		"""
 		for c in self.get_elements():
-			try: assert(c.is_valid())
+			try: assert c.is_valid()
 			except AssertionError: self._add_error_message('Element "%s" is not valid.'%c)
 
 	##############################################
@@ -179,9 +170,9 @@ class FlowGraph(Element):
 		n['timestamp'] = time.ctime()
 		n['block'] = [block.export_data() for block in self.get_blocks()]
 		n['connection'] = [connection.export_data() for connection in self.get_connections()]
-		return {'flow_graph': n}
+		return odict({'flow_graph': n})
 
-	def import_data(self, n):
+	def import_data(self, n=None):
 		"""
 		Import blocks and connections into this flow graph.
 		Clear this flowgraph of all previous blocks and connections.
@@ -190,19 +181,15 @@ class FlowGraph(Element):
 		"""
 		#remove previous elements
 		self._elements = list()
-		#the flow graph tag must exists, or use blank data
-		if 'flow_graph' in n.keys(): fg_n = n['flow_graph']
-		else:
-			Messages.send_error_load('Flow graph data not found, loading blank flow graph.')
-			fg_n = {}
-		blocks_n = utils.listify(fg_n, 'block')
-		connections_n = utils.listify(fg_n, 'connection')
+		#use blank data if none provided
+		fg_n = n and n.find('flow_graph') or odict()
+		blocks_n = fg_n.findall('block')
+		connections_n = fg_n.findall('connection')
 		#create option block
 		self._options_block = self.get_parent().get_new_block(self, 'options')
-		self._options_block.get_param('id').set_value('options')
 		#build the blocks
 		for block_n in blocks_n:
-			key = block_n['key']
+			key = block_n.find('key')
 			if key == 'options': block = self._options_block
 			else: block = self.get_new_block(key)
 			#only load the block when the block key was valid
@@ -210,21 +197,14 @@ class FlowGraph(Element):
 			else: Messages.send_error_load('Block key "%s" not found in %s'%(key, self.get_parent()))
 		#build the connections
 		for connection_n in connections_n:
-			#test that the data tags exist
-			try:
-				assert('source_block_id' in connection_n.keys())
-				assert('sink_block_id' in connection_n.keys())
-				assert('source_key' in connection_n.keys())
-				assert('sink_key' in connection_n.keys())
-			except AssertionError: continue
 			#try to make the connection
 			try:
 				#get the block ids
-				source_block_id = connection_n['source_block_id']
-				sink_block_id = connection_n['sink_block_id']
+				source_block_id = connection_n.find('source_block_id')
+				sink_block_id = connection_n.find('sink_block_id')
 				#get the port keys
-				source_key = connection_n['source_key']
-				sink_key = connection_n['sink_key']
+				source_key = connection_n.find('source_key')
+				sink_key = connection_n.find('sink_key')
 				#verify the blocks
 				block_ids = map(lambda b: b.get_id(), self.get_blocks())
 				assert(source_block_id in block_ids)

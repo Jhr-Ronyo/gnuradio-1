@@ -1,5 +1,5 @@
 """
-Copyright 2007 Free Software Foundation, Inc.
+Copyright 2007, 2008, 2009 Free Software Foundation, Inc.
 This file is part of GNU Radio
 
 GNU Radio Companion is free software; you can redistribute it and/or
@@ -20,7 +20,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA
 import pygtk
 pygtk.require('2.0')
 import gtk
-from Constants import MIN_WINDOW_WIDTH, MIN_WINDOW_HEIGHT
+from Constants import MIN_WINDOW_WIDTH, MIN_WINDOW_HEIGHT, DND_TARGETS
 
 class DrawingArea(gtk.DrawingArea):
 	"""
@@ -40,35 +40,36 @@ class DrawingArea(gtk.DrawingArea):
 		self._main_window.drawing_area = self
 		gtk.DrawingArea.__init__(self)
 		self.set_size_request(MIN_WINDOW_WIDTH, MIN_WINDOW_HEIGHT)
+		self.connect('configure-event', self._handle_window_configure)
 		self.connect('expose-event', self._handle_window_expose)
 		self.connect('motion-notify-event', self._handle_mouse_motion)
 		self.connect('button-press-event', self._handle_mouse_button_press)
 		self.connect('button-release-event', self._handle_mouse_button_release)
-		self.set_events(
+		self.add_events(
 			gtk.gdk.BUTTON_PRESS_MASK | \
 			gtk.gdk.POINTER_MOTION_MASK | \
 			gtk.gdk.BUTTON_RELEASE_MASK | \
 			gtk.gdk.LEAVE_NOTIFY_MASK | \
 			gtk.gdk.ENTER_NOTIFY_MASK
 		)
+		#setup drag and drop
+		self.drag_dest_set(gtk.DEST_DEFAULT_ALL, DND_TARGETS, gtk.gdk.ACTION_COPY)
+		self.connect('drag-data-received', self._handle_drag_data_received)
 		#setup the focus flag
 		self._focus_flag = False
 		self.get_focus_flag = lambda: self._focus_flag
-		self.connect("leave-notify-event", self._handle_focus_event, False)
-		self.connect("enter-notify-event", self._handle_focus_event, True)
-		#pixmap for drawing
-		self.pixmap = None
-		self.gc = None
-
-	def draw(self):
-		"""
-		Draw the pixmap onto this drawing area.
-		"""
-		self.window.draw_drawable(self.gc, self.pixmap, 0, 0, 0, 0, -1, -1)
+		self.connect('leave-notify-event', self._handle_focus_event, False)
+		self.connect('enter-notify-event', self._handle_focus_event, True)
 
 	##########################################################################
 	## Handlers
 	##########################################################################
+	def _handle_drag_data_received(self, widget, drag_context, x, y, selection_data, info, time):
+		"""
+		Handle a drag and drop by adding a block at the given coordinate.
+		"""
+		self._main_window.get_flow_graph().add_new_block(selection_data.data, (x, y))
+
 	def _handle_focus_event(self, widget, event, focus_flag):
 		"""Record the focus state of the flow graph window."""
 		self._focus_flag = focus_flag
@@ -83,7 +84,6 @@ class DrawingArea(gtk.DrawingArea):
 			double_click=(event.type == gtk.gdk._2BUTTON_PRESS),
 			coordinate=(event.x, event.y),
 		)
-		return True
 
 	def _handle_mouse_button_release(self, widget, event):
 		"""
@@ -94,7 +94,6 @@ class DrawingArea(gtk.DrawingArea):
 			left_click=(event.button == 1),
 			coordinate=(event.x, event.y),
 		)
-		return True
 
 	def _handle_mouse_motion(self, widget, event):
 		"""
@@ -104,15 +103,20 @@ class DrawingArea(gtk.DrawingArea):
 		self._main_window.get_flow_graph().handle_mouse_motion(
 			coordinate=(event.x, event.y),
 		)
-		return True
+
+	def _handle_window_configure(self, widget, event):
+		"""
+		Called when the window is resized.
+		Create a new pixmap for background buffer.
+		"""
+		width, height = self.get_size_request()
+		self.pixmap = gtk.gdk.Pixmap(self.window, width, height, -1)
 
 	def _handle_window_expose(self, widget, event):
 		"""
-		Called when the window initially appears or is resized: create a new pixmap, draw the flow graph.
+		Called when window is exposed, or queue_draw is called.
+		Double buffering: draw to pixmap, then draw pixmap to window.
 		"""
-		self.gc = self.window.new_gc()
-		width, height = self.get_size_request()
-		if not self.pixmap or (width, height) != self.pixmap.get_size():
-			self.pixmap = gtk.gdk.Pixmap(self.window, width, height, -1)
-		self._main_window.get_flow_graph().draw()
-		return True
+		gc = self.window.new_gc()
+		self._main_window.get_flow_graph().draw(gc, self.pixmap)
+		self.window.draw_drawable(gc, self.pixmap, 0, 0, 0, 0, -1, -1)
