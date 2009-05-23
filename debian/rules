@@ -6,13 +6,7 @@ export DH_VERBOSE=1
 # This has to be exported to make some magic below work.
 export DH_OPTIONS
 
-CFLAGS = -Wall -g
-
-ifneq (,$(findstring noopt,$(DEB_BUILD_OPTIONS)))
-	CFLAGS += -O0
-else
-	CFLAGS += -O2
-endif
+export DH_PYCENTRAL=nomove
 
 clean:
 	dh_testdir
@@ -42,31 +36,34 @@ configure: configure-stamp
 configure-stamp:
 	dh_testdir
 	[ -f ./configure ] || ./bootstrap
-	CFLAGS="$(CFLAGS)" ./configure \
-		--prefix=/usr --mandir=\$${prefix}/share/man \
-		--infodir=\$${prefix}/share/info --enable-shared \
-		--enable-doxygen --enable-html-docs \
-		--sysconfdir=/etc --enable-all-components \
-		--disable-gr-audio-osx --disable-gr-audio-windows \
+	./configure \
+		--prefix=/usr \
+		--mandir=\$${prefix}/share/man \
+		--infodir=\$${prefix}/share/info \
+		--enable-shared \
+		--sysconfdir=/etc \
+		--enable-all-components \
+		--disable-gr-audio-osx \
+		--disable-gr-audio-windows \
 		--disable-gcell --disable-gr-gcell \
 		--disable-gr-comedi --disable-usrp2-firmware
 	touch configure-stamp
 
+build: build-stamp
+build-stamp: configure-stamp
+
+	$(MAKE)
+	$(MAKE) check
+	touch $@
+
 extract: extract-stamp
-extract-stamp: configure-stamp debian/gen-install-files.sh
+extract-stamp: build-stamp debian/gen-install-files.sh
 	dh_testdir
 	debian/gen-install-files.sh 
 	touch $@
 
-build: build-stamp
-build-stamp: extract-stamp
-
-	$(MAKE) -j
-	$(MAKE) check
-	touch $@
-
 install: install-stamp
-install-stamp: build-stamp
+install-stamp: extract-stamp debian/control
 	dh_testdir
 	dh_testroot
 	dh_clean -k
@@ -111,7 +108,7 @@ binary-common:
 	dh_shlibdeps
 	dh_gencontrol
 	dh_md5sums
-	dh_builddeb --destdir=../debfiles
+	dh_builddeb
 
 # Build architecture independant packages using the common target.
 binary-indep: build install
