@@ -20,12 +20,8 @@ dnl Boston, MA 02110-1301, USA.
 AC_DEFUN([GRC_USRP],[
     GRC_ENABLE(usrp)
 
-    GRC_WITH(usrp, [GRC_WITH_PKG_CONFIG_CHECK(usrp-inband)])
-
-    dnl Don't do usrp if omnithread, mblock, or pmt skipped
+    dnl Don't do usrp if omnithread skipped
     GRC_CHECK_DEPENDENCY(usrp, omnithread)
-    GRC_CHECK_DEPENDENCY(usrp, mblock)
-    GRC_CHECK_DEPENDENCY(usrp, pmt)
 
     dnl Make sure the fast usb technique is set, OS dependent.
     dnl This is always performed, since it puts out CLI flags.
@@ -46,9 +42,6 @@ AC_DEFUN([GRC_USRP],[
         AC_CHECK_FUNCS([getrusage sched_setscheduler pthread_setschedparam])
         AC_CHECK_FUNCS([sigaction snprintf])
 
-	dnl Don't do usrp if guile not available (inband requires it)
-	GRC_CHECK_GUILE(usrp)
-
 	dnl Make sure libusb is installed; required for legacy USB
         USRP_LIBUSB([],[passed=no;AC_MSG_RESULT([Unable to find dependency libusb.])])
 
@@ -61,13 +54,7 @@ AC_DEFUN([GRC_USRP],[
 		-I\${abs_top_srcdir}/usrp/firmware/include \
 		-I\${abs_top_builddir}/usrp/host/lib/legacy"
         usrp_LA="\${abs_top_builddir}/usrp/host/lib/legacy/libusrp.la"
-	usrp_inband_INCLUDES="-I\${abs_top_srcdir}/usrp/host/lib/inband"
-	usrp_inband_LA="\${abs_top_builddir}/usrp/host/lib/inband/libusrp-inband.la"
     fi
-
-    dnl Include the usrp-inband INCLUDES and LA
-    AC_SUBST(usrp_inband_INCLUDES)
-    AC_SUBST(usrp_inband_LA)
 
     dnl There are 2 pkg-config files (usrp, and usrp-inband); the one
     dnl for usrp requires omnithread for Darwin only.  Create a variable
@@ -85,7 +72,6 @@ AC_DEFUN([GRC_USRP],[
     AC_CONFIG_FILES([ \
 	usrp/Makefile \
 	usrp/usrp.pc \
-	usrp/usrp-inband.pc \
         usrp/usrp.iss \
         usrp/doc/Doxyfile \
         usrp/doc/Makefile \
@@ -93,12 +79,10 @@ AC_DEFUN([GRC_USRP],[
         usrp/host/Makefile \
         usrp/host/misc/Makefile \
         usrp/host/lib/Makefile \
-        usrp/host/lib/inband/Makefile \
         usrp/host/lib/legacy/Makefile \
         usrp/host/lib/legacy/std_paths.h \
         usrp/host/swig/Makefile \
         usrp/host/apps/Makefile \
-        usrp/host/apps-inband/Makefile \
         usrp/firmware/Makefile \
         usrp/firmware/include/Makefile \
         usrp/firmware/lib/Makefile \
