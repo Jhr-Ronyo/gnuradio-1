@@ -68,6 +68,10 @@ namespace usrp2 {
   static const int GPIO_TX_BANK = 0;
   static const int GPIO_RX_BANK = 1;
 
+  /*!
+   * \brief standard C++ interface to USRP2
+   * \ingroup usrp2
+   */
   class usrp2 : boost::noncopyable
   {
   public:
@@ -85,6 +89,7 @@ namespace usrp2 {
      * \param addr  Network mac address, e.g., "01:23:45:67:89:ab", "89:ab" or "".
      *              If \p addr is HH:HH, it's treated as if it were 00:50:c2:85:HH:HH
      *              "" will autoselect a USRP2 if there is only a single one on the local ethernet.
+     * \param rx_bufsize is the length in bytes of the kernel networking buffer to allocate.
      */
     static sptr make(const std::string &ifc, const std::string &addr="", size_t rx_bufsize=0);
 

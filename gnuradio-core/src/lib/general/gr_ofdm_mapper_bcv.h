@@ -38,8 +38,8 @@ gr_make_ofdm_mapper_bcv (const std::vector<gr_complex> &constellation, unsigned 
  * \brief take a stream of bytes in and map to a vector of complex
  * constellation points suitable for IFFT input to be used in an ofdm
  * modulator.  Abstract class must be subclassed with specific mapping.
- * \ingroup modulation
- *
+ * \ingroup modulation_blk
+ * \ingroup ofdm_blk
  */
 
 class gr_ofdm_mapper_bcv : public gr_sync_block

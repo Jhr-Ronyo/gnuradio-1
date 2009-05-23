@@ -33,6 +33,9 @@ class usrp_standard_rx;
 typedef boost::shared_ptr<usrp_standard_tx> usrp_standard_tx_sptr;
 typedef boost::shared_ptr<usrp_standard_rx> usrp_standard_rx_sptr;
 
+/*!
+ * \ingroup usrp
+ */
 class usrp_standard_common
 {
   int	d_fpga_caps;		// capability register val
@@ -79,9 +82,11 @@ public:
 };
 
 /*!
- * \brief standard usrp RX class.  
+ * \brief The C++ interface the receive side of the USRP
+ * \ingroup usrp
  *
- * Assumes digital down converter in FPGA
+ * This is the recommended interface to USRP receive functionality
+ * for applications that use the USRP but not GNU Radio.
  */
 class usrp_standard_rx : public usrp_basic_rx, public usrp_standard_common
 {
@@ -122,9 +127,15 @@ class usrp_standard_rx : public usrp_basic_rx, public usrp_standard_common
    * \brief invokes constructor, returns shared_ptr or shared_ptr equivalent of 0 if trouble
    *
    * \param which_board	     Which USRP board on usb (not particularly useful; use 0)
+   * \param decim_rate	     decimation factor
+   * \param nchan	     number of channels
+   * \param mux		     Rx mux setting, \sa set_mux
+   * \param mode	     mode
    * \param fusb_block_size  fast usb xfer block size.  Must be a multiple of 512. 
    *                         Use zero for a reasonable default.
    * \param fusb_nblocks     number of fast usb URBs to allocate.  Use zero for a reasonable default. 
+   * \param fpga_filename    Name of rbf file to load
+   * \param firmware_filename Name of ihx file to load
    */
   static usrp_standard_rx_sptr make(int which_board,
 				    unsigned int decim_rate,
@@ -250,7 +261,7 @@ class usrp_standard_rx : public usrp_basic_rx, public usrp_standard_common
    * \param chan  which DDC channel we're controlling (almost always 0).
    * \param db    the daughterboard we're controlling.
    * \param target_freq the RF frequency we want at DC in the complex baseband.
-   * \param[out] tune_result details how the hardware was configured.
+   * \param[out] result details how the hardware was configured.
    *
    * \returns true iff everything was successful.
    */
@@ -272,7 +283,11 @@ class usrp_standard_rx : public usrp_basic_rx, public usrp_standard_common
 // ----------------------------------------------------------------
 
 /*!
- * \brief standard usrp TX class.
+ * \brief The C++ interface the transmit side of the USRP
+ * \ingroup usrp
+ *
+ * This is the recommended interface to USRP transmit functionality
+ * for applications that use the USRP but not GNU Radio.
  *
  * Uses digital upconverter (coarse & fine modulators) in AD9862...
  */
@@ -320,9 +335,14 @@ class usrp_standard_tx : public usrp_basic_tx, public usrp_standard_common
    * \brief invokes constructor, returns shared_ptr or shared_ptr equivalent of 0 if trouble
    *
    * \param which_board	     Which USRP board on usb (not particularly useful; use 0)
+   * \param interp_rate	     interpolation factor
+   * \param nchan	     number of channels
+   * \param mux		     Tx mux setting, \sa set_mux
    * \param fusb_block_size  fast usb xfer block size.  Must be a multiple of 512. 
    *                         Use zero for a reasonable default.
    * \param fusb_nblocks     number of fast usb URBs to allocate.  Use zero for a reasonable default. 
+   * \param fpga_filename    Name of rbf file to load
+   * \param firmware_filename Name of ihx file to load
    */
   static usrp_standard_tx_sptr make(int which_board,
 				    unsigned int interp_rate,
@@ -417,7 +437,7 @@ class usrp_standard_tx : public usrp_basic_tx, public usrp_standard_common
    * \param chan  which DUC channel we're controlling (usually == which_side).
    * \param db    the daughterboard we're controlling.
    * \param target_freq the RF frequency we want our baseband translated to.
-   * \param[out] tune_result details how the hardware was configured.
+   * \param[out] result details how the hardware was configured.
    *
    * \returns true iff everything was successful.
    */
