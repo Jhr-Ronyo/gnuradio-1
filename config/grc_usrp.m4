@@ -20,6 +20,8 @@ dnl Boston, MA 02110-1301, USA.
 AC_DEFUN([GRC_USRP],[
     GRC_ENABLE(usrp)
 
+    GRC_WITH(usrp)
+
     dnl Don't do usrp if omnithread skipped
     GRC_CHECK_DEPENDENCY(usrp, omnithread)
 
