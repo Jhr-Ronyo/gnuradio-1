@@ -25,11 +25,12 @@ from Connection import Connection
 def _get_value_expr(variable_block):
 	"""
 	Get the expression to evaluate from the value param.
+	Parameter blocks need to be evaluated so the stringify flag can be determined.
 	@param variable_block the variable or parameter block
 	@return the expression string
 	"""
 	value_param = variable_block.get_param('value')
-	value_param.evaluate() #evaluate prior to code
+	if variable_block.get_key() == 'parameter': value_param.evaluate()
 	return value_param.to_code()
 
 class FlowGraph(_FlowGraph):
@@ -42,13 +43,12 @@ class FlowGraph(_FlowGraph):
 		@param namespace a dict representing the namespace
 		@return the resultant object
 		"""
-		#check cache
-		if self._eval_cache.has_key(code) and self._eval_cache[code][0] == namespace:
-			return self._eval_cache[code][1]
-		#evaluate
-		result = eval(code, namespace, namespace)
-		self._eval_cache[code] = (namespace.copy(), result)
-		return result
+		my_hash = hash(code + str(namespace))
+		#cache if does not exist
+		if not self._eval_cache.has_key(my_hash):
+			self._eval_cache[my_hash] = eval(code, namespace, namespace)
+		#return from cache
+		return self._eval_cache[my_hash]
 
 	def _get_io_signature(self, pad_key):
 		"""
