@@ -281,6 +281,10 @@ class FlowGraph(Element):
 		for selected in selected_elements:
 			if selected in elements: continue
 			selected_elements.remove(selected)
+		try: assert self._old_selected_port.get_parent() in elements
+		except: self._old_selected_port = None
+		try: assert self._new_selected_port.get_parent() in elements
+		except: self._new_selected_port = None
 		#update highlighting
 		for element in elements:
 			element.set_highlighted(element in selected_elements)
