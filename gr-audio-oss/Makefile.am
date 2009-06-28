@@ -23,5 +23,5 @@ include $(top_srcdir)/Makefile.common
 
 SUBDIRS = src
 
-etcdir = $(sysconfdir)/gnuradio/conf.d
+etcdir = $(gr_sysconfdir)
 dist_etc_DATA = gr-audio-oss.conf

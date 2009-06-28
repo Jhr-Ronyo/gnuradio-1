@@ -28,7 +28,7 @@ EXTRA_DIST = \
 
 SUBDIRS = src
 
-etcdir = $(sysconfdir)/gnuradio/conf.d
+etcdir = $(gr_sysconfdir)
 dist_etc_DATA = gr-wxgui.conf
 
 pkgconfigdir = $(libdir)/pkgconfig
