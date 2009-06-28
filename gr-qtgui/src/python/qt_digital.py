@@ -11,7 +11,7 @@ try:
     from qt_digital_window import Ui_DigitalWindow
 except ImportError:
     print "Error: could not find qt_digital_window.py:"
-    print "\t\"pyuic4 qt_digital_window.ui -o qt_digital_window.py\""
+    print "\t\"Please run: pyuic4 qt_digital_window.ui -o qt_digital_window.py\""
     sys.exit(1)
 
 class dialog_box(QtGui.QMainWindow):
@@ -148,7 +148,7 @@ class my_top_block(gr.top_block):
         fftsize = 2048
 
         self.data = scipy.random.randint(0, 255, 1000)
-        self.src = gr.vector_source_b(self.data, True)
+        self.src = gr.vector_source_b(self.data.tolist(), True)
         self.mod = blks2.dqpsk_mod(self.sps, self.excess_bw, self.gray_code, False, False)
 
         self.rrctaps = gr.firdes.root_raised_cosine(1, self.sps, 1, self.excess_bw, 21)
