@@ -42,7 +42,7 @@
 		<value>1</value>
 		<type>int</type>
 	</param>
-	<check>$num_inputs &gt;= 2</check>
+	<check>$num_inputs &gt;= 1</check>
 	<check>$vlen &gt;= 1</check>
 	<sink>
 		<name>in</name>
@@ -51,8 +51,11 @@
 		<nports>$num_inputs</nports>
 	</sink>
 	<source>
-		<name>out</name>
+		<name>max_vec</name>
 		<type>short</type>
-		<vlen>$vlen</vlen>
+	</source>
+	<source>
+		<name>max_inp</name>
+		<type>short</type>
 	</source>
 </block>
