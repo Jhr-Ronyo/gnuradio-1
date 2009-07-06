@@ -19,7 +19,7 @@ dnl  the Free Software Foundation, Inc., 51 Franklin Street,
 dnl  Boston, MA 02110-1301, USA.
 dnl 
 
-AC_INIT(gr-howto-write-a-block,3.2.1svn)
+AC_INIT(gr-howto-write-a-block,3.2.1)
 AC_PREREQ(2.57)
 AC_CONFIG_AUX_DIR([.])	
 
