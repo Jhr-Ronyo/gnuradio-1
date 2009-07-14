@@ -1,17 +1,24 @@
-gnuradio (3.2.1-1) unstable; urgency=low
+gnuradio (3.2.2-1) stable; urgency=low
+
+  * New upstream release 3.2.2
+  * See http://gnuradio.org/trac
+
+ -- Johnathan Corgan <jcorgan@corganenterprises.com>  Sat,  06 Jul 2009 16:00:00 -0800
+
+gnuradio (3.2.1-1) stable; urgency=low
 
   * Fix broken prefs.py when installed using --prefix=/usr
 
  -- Johnathan Corgan <jcorgan@corganenterprises.com>  Sat,  06 Jul 2009 16:00:00 -0800
 
-gnuradio (3.2.1) unstable; urgency=low
+gnuradio (3.2.1) stable; urgency=low
 
   * New upstream release 3.2.1
   * See http://gnuradio.org/trac
 
  -- Johnathan Corgan <jcorgan@corganenterprises.com>  Sat,  05 Jul 2009 18:00:00 -0800
 
-gnuradio (3.2) unstable; urgency=low
+gnuradio (3.2) stable; urgency=low
 
   * New upstream release 3.2
   * See http://gnuradio.org/trac
