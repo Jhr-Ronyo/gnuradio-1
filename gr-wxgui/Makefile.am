@@ -28,7 +28,7 @@ EXTRA_DIST = \
 
 SUBDIRS = src
 
-etcdir = $(gr_sysconfdir)
+etcdir = $(gr_prefsdir)
 dist_etc_DATA = gr-wxgui.conf
 
 pkgconfigdir = $(libdir)/pkgconfig

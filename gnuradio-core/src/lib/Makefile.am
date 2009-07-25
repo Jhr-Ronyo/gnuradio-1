@@ -26,6 +26,8 @@ include $(top_srcdir)/Makefile.common
 # We've got to build . before swig
 SUBDIRS = missing runtime filter viterbi general gengen g72x reed-solomon io hier . swig
 
+AM_CPPFLAGS = $(STD_DEFINES_AND_INCLUDES) $(CPPUNIT_INCLUDES) $(WITH_INCLUDES)
+
 # generate libgnuradio-core.la from the convenience libraries in subdirs
 
 lib_LTLIBRARIES = libgnuradio-core.la libgnuradio-core-qa.la
@@ -61,3 +63,7 @@ libgnuradio_core_qa_la_LIBADD  = 	\
 	runtime/libruntime-qa.la	\
 	libgnuradio-core.la		\
 	$(CPPUNIT_LIBS)			
+
+bin_PROGRAMS = gnuradio
+gnuradio_SOURCES = gnuradio.cc
+gnuradio_LDADD = libgnuradio-core.la $(BOOST_PROGRAM_OPTIONS_LIB)
