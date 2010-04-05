@@ -130,7 +130,8 @@ libusrp_la_common_SOURCES = 		\
 	db_xcvr2450.cc			\
 	db_dtt754.cc			\
 	db_dtt768.cc			\
-	db_util.cc
+	db_util.cc			\
+	db_rfic.cc
 
 if FUSB_TECH_generic
 libusrp_la_SOURCES = $(libusrp_la_common_SOURCES) $(generic_CODE)

@@ -86,3 +86,6 @@
 
 "Experimental Tx"	0xfffe
 "Experimental Rx"	0xffff
+
+"RFIC TX"		0x00A0
+"RFIC RX"		0x00A1	
