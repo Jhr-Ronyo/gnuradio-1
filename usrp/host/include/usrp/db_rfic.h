@@ -1,5 +1,5 @@
-#ifndef DB_rfic_H
-#define DB_rfic_H
+#ifndef DB_RFIC_H
+#define DB_RFIC_H
 
 #include <usrp/db_base.h>
 #include <boost/shared_ptr.hpp>
@@ -85,8 +85,5 @@ public:
   float gain_db_per_step();
 
 };
-
-
-
 
 #endif
