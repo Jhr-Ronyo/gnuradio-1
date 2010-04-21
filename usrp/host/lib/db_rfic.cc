@@ -73,8 +73,10 @@ db_rfic_base::shutdown_common()
 db_rfic_tx::db_rfic_tx(usrp_basic_sptr usrp, int which)
   : db_rfic_base(usrp, which)
 {
-	
-  //select_tx_antenna(abc);
+
+  // Set default to antenna "TX2"
+  select_tx_antenna(1);
+
   d_rfic->set_reg_0();
   d_rfic->set_reg_1();
   d_rfic->set_reg_2();
@@ -426,8 +428,8 @@ db_rfic_tx::gain_db_per_step()
 db_rfic_rx::db_rfic_rx(usrp_basic_sptr usrp, int which)
   : db_rfic_base(usrp, which)
 {
-  std::string abc = "MIX5";
-  this->select_rx_antenna(abc);
+  select_rx_antenna("MIX5");
+
   d_rfic->set_reg_48();
   d_rfic->set_reg_49();
   d_rfic->set_reg_50();
@@ -766,7 +768,6 @@ db_rfic_rx::select_rx_antenna(std::string which_antenna) {
   //Specif(y which antenna port to use for transmission.
   //@param which_antenna: either  LNA1/0, LNA2/1, LNA3/2, LNA4/3 or MIX5/4
 
-  which_antenna = "MIX5";
   if( which_antenna == "LNA1") {
     d_rfic->rx_lna = 1;
     d_rfic->set_reg_205();
