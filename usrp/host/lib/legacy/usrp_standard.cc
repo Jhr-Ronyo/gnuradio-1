@@ -29,7 +29,7 @@
 #include <assert.h>
 #include <math.h>
 #include <ad9862.h>
-
+#include <cstdio>
 
 static const int OLD_CAPS_VAL = 0xaa55ff77;
 static const int DEFAULT_CAPS_VAL = ((2 << bmFR_RB_CAPS_NDUC_SHIFT)
