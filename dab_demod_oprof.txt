@@ -1,0 +1,24 @@
+CPU: CPU with timer interrupt, speed 0 MHz (estimated)
+Profiling through timer interrupt
+          TIMER:0|
+  samples|      %|
+------------------
+     3542 28.4727 libm-2.12.2.so
+     2976 23.9228 libgnuradio-core-3.4.1git.so.0.0.0
+     1637 13.1592 no-vmlinux
+     1151  9.2524 libgcc_s.so.1
+     1130  9.0836 libgnuradio-dab-3.3.0.so.0.0.0
+      758  6.0932 libfftw3f.so.3.2.4
+      549  4.4132 libc-2.12.2.so
+      407  3.2717 libpthread-2.12.2.so
+      120  0.9646 libpython2.6.so.1.0
+       82  0.6592 libboost_thread.so.1.45.0
+       72  0.5788 python
+	          TIMER:0|
+	  samples|      %|
+	------------------
+	       72 100.000 [vectors] (tgid:8032 range:0xffff0000-0xffff1000)
+        6  0.0482 ld-2.12.2.so
+        5  0.0402 busybox
+        3  0.0241 time.so
+        2  0.0161 oprofiled

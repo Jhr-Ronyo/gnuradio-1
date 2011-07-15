@@ -1,0 +1,85 @@
+CPU: CPU with timer interrupt, speed 0 MHz (estimated)
+Profiling through timer interrupt
+samples  %        image name               app name                 symbol name
+3594     27.8540  libm-2.12.2.so           libm-2.12.2.so           /lib/libm-2.12.2.so
+2368     18.3523  no-vmlinux               no-vmlinux               /no-vmlinux
+1138      8.8197  libgcc_s.so.1            libgcc_s.so.1            /lib/libgcc_s.so.1
+647       5.0143  libgnuradio-core-3.4.1git.so.0.0.0 libgnuradio-core-3.4.1git.so.0.0.0 gr_peak_detector_fb::work(int, std::vector<void const*, std::allocator<void const*> >&, std::vector<void*, std::allocator<void*> >&)
+503       3.8983  libc-2.12.2.so           libc-2.12.2.so           /lib/libc-2.12.2.so
+428       3.3171  libgnuradio-core-3.4.1git.so.0.0.0 libgnuradio-core-3.4.1git.so.0.0.0 gr_frequency_modulator_fc::work(int, std::vector<void const*, std::allocator<void const*> >&, std::vector<void*, std::allocator<void*> >&)
+411       3.1853  libgnuradio-dab-3.3.0.so.0.0.0 libgnuradio-dab-3.3.0.so.0.0.0 dab_moving_sum_ff::work(int, std::vector<void const*, std::allocator<void const*> >&, std::vector<void*, std::allocator<void*> >&)
+384       2.9761  libpthread-2.12.2.so     libpthread-2.12.2.so     /lib/libpthread-2.12.2.so
+375       2.9063  libfftw3f.so.3.2.4       libfftw3f.so.3.2.4       t2fv_32
+363       2.8133  libfftw3f.so.3.2.4       libfftw3f.so.3.2.4       n2fv_64
+329       2.5498  libgnuradio-core-3.4.1git.so.0.0.0 libgnuradio-core-3.4.1git.so.0.0.0 gr_multiply_cc::work(int, std::vector<void const*, std::allocator<void const*> >&, std::vector<void*, std::allocator<void*> >&)
+293       2.2708  libgnuradio-core-3.4.1git.so.0.0.0 libgnuradio-core-3.4.1git.so.0.0.0 gr_complex_to_mag_squared::work(int, std::vector<void const*, std::allocator<void const*> >&, std::vector<void*, std::allocator<void*> >&)
+291       2.2553  libgnuradio-core-3.4.1git.so.0.0.0 libgnuradio-core-3.4.1git.so.0.0.0 gr_block_executor::run_one_iteration()
+187       1.4493  libgnuradio-core-3.4.1git.so.0.0.0 libgnuradio-core-3.4.1git.so.0.0.0 gr_multiply_const_ff::work(int, std::vector<void const*, std::allocator<void const*> >&, std::vector<void*, std::allocator<void*> >&)
+144       1.1160  libgnuradio-dab-3.3.0.so.0.0.0 libgnuradio-dab-3.3.0.so.0.0.0 dab_qpsk_demapper_vcb::work(int, std::vector<void const*, std::allocator<void const*> >&, std::vector<void*, std::allocator<void*> >&)
+118       0.9145  libgnuradio-dab-3.3.0.so.0.0.0 libgnuradio-dab-3.3.0.so.0.0.0 dab_frequency_interleaver_vcc::work(int, std::vector<void const*, std::allocator<void const*> >&, std::vector<void*, std::allocator<void*> >&)
+118       0.9145  libpython2.6.so.1.0      libpython2.6.so.1.0      /usr/lib/libpython2.6.so.1.0
+113       0.8758  libgnuradio-dab-3.3.0.so.0.0.0 libgnuradio-dab-3.3.0.so.0.0.0 dab_ofdm_coarse_frequency_correct::work(int, std::vector<void const*, std::allocator<void const*> >&, std::vector<void*, std::allocator<void*> >&)
+110       0.8525  libgnuradio-dab-3.3.0.so.0.0.0 libgnuradio-dab-3.3.0.so.0.0.0 dab_diff_phasor_vcc::work(int, std::vector<void const*, std::allocator<void const*> >&, std::vector<void*, std::allocator<void*> >&)
+93        0.7208  libgnuradio-core-3.4.1git.so.0.0.0 libgnuradio-core-3.4.1git.so.0.0.0 min_available_space(gr_block_detail*, int)
+90        0.6975  libgnuradio-dab-3.3.0.so.0.0.0 libgnuradio-dab-3.3.0.so.0.0.0 dab_ofdm_ffe_all_in_one::work(int, std::vector<void const*, std::allocator<void const*> >&, std::vector<void*, std::allocator<void*> >&)
+85        0.6588  libboost_thread.so.1.45.0 libboost_thread.so.1.45.0 /usr/lib/libboost_thread.so.1.45.0
+76        0.5890  libgnuradio-dab-3.3.0.so.0.0.0 libgnuradio-dab-3.3.0.so.0.0.0 dab_ofdm_remove_first_symbol_vcc::general_work(int, std::vector<int, std::allocator<int> >&, std::vector<void const*, std::allocator<void const*> >&, std::vector<void*, std::allocator<void*> >&)
+69        0.5348  libgnuradio-core-3.4.1git.so.0.0.0 libgnuradio-core-3.4.1git.so.0.0.0 gr_tpb_thread_body::gr_tpb_thread_body(boost::shared_ptr<gr_block>)
+68        0.5270  libgnuradio-core-3.4.1git.so.0.0.0 libgnuradio-core-3.4.1git.so.0.0.0 gr_sincosf
+65        0.5038  [vectors] (tgid:7865 range:0xffff0000-0xffff1000) python                   [vectors] (tgid:7865 range:0xffff0000-0xffff1000)
+64        0.4960  libgnuradio-core-3.4.1git.so.0.0.0 libgnuradio-core-3.4.1git.so.0.0.0 gr_tpb_detail::notify_downstream(gr_block_detail*)
+50        0.3875  libgnuradio-core-3.4.1git.so.0.0.0 libgnuradio-core-3.4.1git.so.0.0.0 gr_tpb_detail::notify_upstream(gr_block_detail*)
+21        0.1628  libgnuradio-core-3.4.1git.so.0.0.0 libgnuradio-core-3.4.1git.so.0.0.0 gr_block_detail::consume_each(int)
+19        0.1473  libgnuradio-core-3.4.1git.so.0.0.0 libgnuradio-core-3.4.1git.so.0.0.0 gr_buffer::space_available()
+18        0.1395  libgnuradio-core-3.4.1git.so.0.0.0 libgnuradio-core-3.4.1git.so.0.0.0 gr_buffer_reader::items_available() const
+16        0.1240  libgnuradio-core-3.4.1git.so.0.0.0 libgnuradio-core-3.4.1git.so.0.0.0 gr_tpb_detail::delete_head_nowait()
+14        0.1085  libgnuradio-core-3.4.1git.so.0.0.0 libgnuradio-core-3.4.1git.so.0.0.0 gr_buffer_reader::get_tags_in_range(std::vector<boost::intrusive_ptr<pmt::pmt_base>, std::allocator<boost::intrusive_ptr<pmt::pmt_base> > >&, unsigned long long, unsigned long long)
+14        0.1085  libgnuradio-core-3.4.1git.so.0.0.0 libgnuradio-core-3.4.1git.so.0.0.0 gr_buffer_reader::update_read_pointer(int)
+13        0.1008  libgnuradio-core-3.4.1git.so.0.0.0 libgnuradio-core-3.4.1git.so.0.0.0 _ZL14propagate_tagsN8gr_block24tag_propagation_policy_tEP15gr_block_detailRKSt6vectorIySaIyEEdRS3_IN5boost13intrusive_ptrIN3pmt8pmt_baseEEESaISC_EE.clone.162
+13        0.1008  libgnuradio-core-3.4.1git.so.0.0.0 libgnuradio-core-3.4.1git.so.0.0.0 gr_block_detail::nitems_read(unsigned int)
+13        0.1008  libgnuradio-core-3.4.1git.so.0.0.0 libgnuradio-core-3.4.1git.so.0.0.0 gri_iir<float, float, double>::filter(float)
+11        0.0853  libgnuradio-core-3.4.1git.so.0.0.0 libgnuradio-core-3.4.1git.so.0.0.0 std::vector<int, std::allocator<int> >::_M_fill_insert(__gnu_cxx::__normal_iterator<int*, std::vector<int, std::allocator<int> > >, unsigned int, int const&)
+10        0.0775  libgnuradio-core-3.4.1git.so.0.0.0 libgnuradio-core-3.4.1git.so.0.0.0 _ZNSt6vectorIbSaIbEE14_M_fill_insertESt13_Bit_iteratorjb.clone.174
+10        0.0775  libgnuradio-core-3.4.1git.so.0.0.0 libgnuradio-core-3.4.1git.so.0.0.0 std::vector<void*, std::allocator<void*> >::_M_fill_insert(__gnu_cxx::__normal_iterator<void**, std::vector<void*, std::allocator<void*> > >, unsigned int, void* const&)
+9         0.0698  libgnuradio-core-3.4.1git.so.0.0.0 libgnuradio-core-3.4.1git.so.0.0.0 gr_sync_block::forecast(int, std::vector<int, std::allocator<int> >&)
+8         0.0620  libgnuradio-core-3.4.1git.so.0.0.0 libgnuradio-core-3.4.1git.so.0.0.0 gr_tpb_detail::delete_head_nowait_already_holding_mutex()
+8         0.0620  libgnuradio-core-3.4.1git.so.0.0.0 libgnuradio-core-3.4.1git.so.0.0.0 gr_tpb_detail::notify_neighbors(gr_block_detail*)
+8         0.0620  libgnuradio-core-3.4.1git.so.0.0.0 libgnuradio-core-3.4.1git.so.0.0.0 std::vector<void const*, std::allocator<void const*> >::_M_fill_insert(__gnu_cxx::__normal_iterator<void const**, std::vector<void const*, std::allocator<void const*> > >, unsigned int, void const* const&)
+8         0.0620  libgnuradio-dab-3.3.0.so.0.0.0 libgnuradio-dab-3.3.0.so.0.0.0 dab_modulo_ff::work(int, std::vector<void const*, std::allocator<void const*> >&, std::vector<void*, std::allocator<void*> >&)
+6         0.0465  libgnuradio-core-3.4.1git.so.0.0.0 libgnuradio-core-3.4.1git.so.0.0.0 gr_block_detail::produce_each(int)
+6         0.0465  libgnuradio-core-3.4.1git.so.0.0.0 libgnuradio-core-3.4.1git.so.0.0.0 gr_buffer::write_pointer()
+6         0.0465  libgnuradio-core-3.4.1git.so.0.0.0 libgnuradio-core-3.4.1git.so.0.0.0 gr_fast_atan2f(float, float)
+6         0.0465  libgnuradio-core-3.4.1git.so.0.0.0 libgnuradio-core-3.4.1git.so.0.0.0 gr_fft_vcc_fftw::work(int, std::vector<void const*, std::allocator<void const*> >&, std::vector<void*, std::allocator<void*> >&)
+6         0.0465  libgnuradio-dab-3.3.0.so.0.0.0 libgnuradio-dab-3.3.0.so.0.0.0 dab_ofdm_coarse_frequency_correct::mag_squared(std::complex<float>)
+6         0.0465  libgnuradio-dab-3.3.0.so.0.0.0 libgnuradio-dab-3.3.0.so.0.0.0 dab_ofdm_ffe_all_in_one::calc_ffe_estimate(std::complex<float> const*)
+6         0.0465  libgnuradio-dab-3.3.0.so.0.0.0 libgnuradio-dab-3.3.0.so.0.0.0 dab_ofdm_sampler::general_work(int, std::vector<int, std::allocator<int> >&, std::vector<void const*, std::allocator<void const*> >&, std::vector<void*, std::allocator<void*> >&)
+5         0.0388  libgnuradio-core-3.4.1git.so.0.0.0 libgnuradio-core-3.4.1git.so.0.0.0 gr_buffer::prune_tags(unsigned long long)
+5         0.0388  libgnuradio-core-3.4.1git.so.0.0.0 libgnuradio-core-3.4.1git.so.0.0.0 gr_buffer::update_write_pointer(int)
+5         0.0388  libgnuradio-core-3.4.1git.so.0.0.0 libgnuradio-core-3.4.1git.so.0.0.0 gr_buffer_reader::read_pointer()
+5         0.0388  libgnuradio-core-3.4.1git.so.0.0.0 libgnuradio-core-3.4.1git.so.0.0.0 std::vector<boost::intrusive_ptr<pmt::pmt_base>, std::allocator<boost::intrusive_ptr<pmt::pmt_base> > >::_M_fill_insert(__gnu_cxx::__normal_iterator<boost::intrusive_ptr<pmt::pmt_base>*, std::vector<boost::intrusive_ptr<pmt::pmt_base>, std::allocator<boost::intrusive_ptr<pmt::pmt_base> > > >, unsigned int, boost::intrusive_ptr<pmt::pmt_base> const&)
+5         0.0388  libgnuradio-dab-3.3.0.so.0.0.0 libgnuradio-dab-3.3.0.so.0.0.0 dab_ofdm_remove_first_symbol_vcc::forecast(int, std::vector<int, std::allocator<int> >&)
+4         0.0310  libgnuradio-core-3.4.1git.so.0.0.0 libgnuradio-core-3.4.1git.so.0.0.0 gr_block::consume_each(int)
+4         0.0310  libgnuradio-core-3.4.1git.so.0.0.0 libgnuradio-core-3.4.1git.so.0.0.0 gr_iir_filter_ffd::work(int, std::vector<void const*, std::allocator<void const*> >&, std::vector<void*, std::allocator<void*> >&)
+4         0.0310  libgnuradio-core-3.4.1git.so.0.0.0 libgnuradio-core-3.4.1git.so.0.0.0 gr_kludge_copy::work(int, std::vector<void const*, std::allocator<void const*> >&, std::vector<void*, std::allocator<void*> >&)
+4         0.0310  libgnuradio-core-3.4.1git.so.0.0.0 libgnuradio-core-3.4.1git.so.0.0.0 std::vector<unsigned long long, std::allocator<unsigned long long> >::_M_fill_insert(__gnu_cxx::__normal_iterator<unsigned long long*, std::vector<unsigned long long, std::allocator<unsigned long long> > >, unsigned int, unsigned long long const&)
+3         0.0233  libfftw3f.so.3.2.4       libfftw3f.so.3.2.4       apply
+3         0.0233  libgnuradio-core-3.4.1git.so.0.0.0 libgnuradio-core-3.4.1git.so.0.0.0 gr_block::tag_propagation_policy()
+3         0.0233  libgnuradio-core-3.4.1git.so.0.0.0 libgnuradio-core-3.4.1git.so.0.0.0 gr_keep_one_in_n::general_work(int, std::vector<int, std::allocator<int> >&, std::vector<void const*, std::allocator<void const*> >&, std::vector<void*, std::allocator<void*> >&)
+2         0.0155  busybox                  busybox                  /bin/busybox
+2         0.0155  libgnuradio-core-3.4.1git.so.0.0.0 libgnuradio-core-3.4.1git.so.0.0.0 gr_block_detail::consume(int, int)
+2         0.0155  libgnuradio-core-3.4.1git.so.0.0.0 libgnuradio-core-3.4.1git.so.0.0.0 gr_block_detail::get_tags_in_range(std::vector<boost::intrusive_ptr<pmt::pmt_base>, std::allocator<boost::intrusive_ptr<pmt::pmt_base> > >&, unsigned int, unsigned long long, unsigned long long)
+2         0.0155  libgnuradio-core-3.4.1git.so.0.0.0 libgnuradio-core-3.4.1git.so.0.0.0 gr_nop::general_work(int, std::vector<int, std::allocator<int> >&, std::vector<void const*, std::allocator<void const*> >&, std::vector<void*, std::allocator<void*> >&)
+2         0.0155  libgnuradio-core-3.4.1git.so.0.0.0 libgnuradio-core-3.4.1git.so.0.0.0 gr_sync_block::general_work(int, std::vector<int, std::allocator<int> >&, std::vector<void const*, std::allocator<void const*> >&, std::vector<void*, std::allocator<void*> >&)
+2         0.0155  time.so                  time.so                  /usr/lib/python2.6/lib-dynload/time.so
+1         0.0078  ld-2.12.2.so             ld-2.12.2.so             /lib/ld-2.12.2.so
+1         0.0078  libfftw3f.so.3.2.4       libfftw3f.so.3.2.4       fftwf_execute
+1         0.0078  libgnuradio-core-3.4.1git.so.0.0.0 libgnuradio-core-3.4.1git.so.0.0.0 gr_delay::work(int, std::vector<void const*, std::allocator<void const*> >&, std::vector<void*, std::allocator<void*> >&)
+1         0.0078  libgnuradio-core-3.4.1git.so.0.0.0 libgnuradio-core-3.4.1git.so.0.0.0 gr_io_signature::sizeof_stream_item(int) const
+1         0.0078  libgnuradio-core-3.4.1git.so.0.0.0 libgnuradio-core-3.4.1git.so.0.0.0 gr_sub_ff::work(int, std::vector<void const*, std::allocator<void const*> >&, std::vector<void*, std::allocator<void*> >&)
+1         0.0078  libgnuradio-core-3.4.1git.so.0.0.0 libgnuradio-core-3.4.1git.so.0.0.0 gr_sync_block::fixed_rate_noutput_to_ninput(int)
+1         0.0078  libgnuradio-core-3.4.1git.so.0.0.0 libgnuradio-core-3.4.1git.so.0.0.0 gri_fft_complex::execute()
+1         0.0078  libgnuradio-dab-3.3.0.so.0.0.0 libgnuradio-dab-3.3.0.so.0.0.0 dab_measure_processing_rate::work(int, std::vector<void const*, std::allocator<void const*> >&, std::vector<void*, std::allocator<void*> >&)
+1         0.0078  libgnuradio-dab-3.3.0.so.0.0.0 libgnuradio-dab-3.3.0.so.0.0.0 dab_ofdm_coarse_frequency_correct::correlate_energy(std::complex<float> const*)
+1         0.0078  libgnuradio-dab-3.3.0.so.0.0.0 libgnuradio-dab-3.3.0.so.0.0.0 dab_ofdm_sampler::forecast(int, std::vector<int, std::allocator<int> >&)
+1         0.0078  oprofiled                oprofiled                code_cookie_switch
+1         0.0078  oprofiled                oprofiled                opd_process_samples
