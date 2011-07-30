@@ -21,7 +21,7 @@
 # 
 
 from gnuradio import gr, gru
-from gnuradio import usrp
+from gnuradio import uhd
 from gnuradio import eng_notation
 from gnuradio.eng_option import eng_option
 from optparse import OptionParser
@@ -30,11 +30,15 @@ from optparse import OptionParser
 from gnuradio import digital
 
 # from current dir
-from receive_path import receive_path
+from uhd_receive_path import receive_path
 
 import random
 import struct
 import sys
+import socket
+
+HOST = 'localhost'
+PORT = 5004
 
 #import os
 #print os.getpid()
@@ -47,15 +51,7 @@ class my_top_block(gr.top_block):
         # Set up receive path
         self.rxpath = receive_path(demodulator, rx_callback, options) 
 
-        if(options.from_file is not None):
-            self.thr = gr.throttle(gr.sizeof_gr_complex, 1e6)
-            self.source = gr.file_source(gr.sizeof_gr_complex, options.from_file)
-            self.connect(self.source, self.thr, self.rxpath)
-        else:
-            self.thr = gr.throttle(gr.sizeof_gr_complex, 1e6)
-            self.source = gr.null_source(gr.sizeof_gr_complex)
-            self.connect(self.source, self.thr, self.rxpath)
-
+        self.connect(self.rxpath)
 
 # /////////////////////////////////////////////////////////////////////////////
 #                                   main
@@ -68,7 +64,9 @@ def main():
 
     n_rcvd = 0
     n_right = 0
-    
+
+    s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+
     def rx_callback(ok, payload):
         global n_rcvd, n_right
         (pktno,) = struct.unpack('!H', payload[0:2])
@@ -78,6 +76,9 @@ def main():
 
         print "ok = %5s  pktno = %4d  n_rcvd = %4d  n_right = %4d" % (
             ok, pktno, n_rcvd, n_right)
+
+        if pktno > 0:
+            s.sendto(payload[2:], (HOST, PORT))
 
     demods = digital.modulation_utils2.type_1_demods()
 
@@ -102,13 +103,6 @@ def main():
     if len(args) != 0:
         parser.print_help(sys.stderr)
         sys.exit(1)
-
-    if options.from_file is None:
-        if options.rx_freq is None:
-            sys.stderr.write("You must specify -f FREQ or --freq FREQ\n")
-            parser.print_help(sys.stderr)
-            sys.exit(1)
-
 
     # build the graph
     tb = my_top_block(demods[options.modulation], rx_callback, options)
