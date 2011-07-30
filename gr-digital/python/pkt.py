@@ -24,6 +24,7 @@ from gnuradio import gr
 import gnuradio.gr.gr_threading as _threading
 import packet_utils
 import digital_swig
+import time
 
 
 # /////////////////////////////////////////////////////////////////////////////
@@ -83,7 +84,7 @@ class mod_pkts(gr.hier_block2):
         else:
             self.connect(self._pkt_input, self)
 
-    def send_pkt(self, payload='', eof=False):
+    def send_pkt(self, payload='', eof=False, fill=False):
         """
         Send the payload.
 
@@ -104,8 +105,12 @@ class mod_pkts(gr.hier_block2):
             msg = gr.message_from_string(pkt)
             if self._use_whitener_offset is True:
                 self._whitener_offset = (self._whitener_offset + 1) % 16
-                
-        self._pkt_input.msgq().insert_tail(msg)
+
+        if fill and self._pkt_input.msgq().full_p():
+            time.sleep(.001)
+            return
+        else:
+            self._pkt_input.msgq().insert_tail(msg)
 
 
 

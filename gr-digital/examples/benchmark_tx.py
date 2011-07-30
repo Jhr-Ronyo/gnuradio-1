@@ -21,7 +21,7 @@
 # 
 
 from gnuradio import gr, gru
-from gnuradio import usrp
+from gnuradio import uhd
 from gnuradio import eng_notation
 from gnuradio.eng_option import eng_option
 from optparse import OptionParser
@@ -30,9 +30,12 @@ from optparse import OptionParser
 from gnuradio import digital
 
 # from current dir
-from transmit_path import transmit_path
+from uhd_transmit_path import transmit_path
 
-import random, time, struct, sys
+import random, time, struct, sys, socket
+
+HOST = 'localhost'
+PORT = 5004
 
 #import os 
 #print os.getpid()
@@ -43,13 +46,8 @@ class my_top_block(gr.top_block):
         gr.top_block.__init__(self)
 
         self.txpath = transmit_path(modulator, options)
-
-        if(options.to_file is not None):
-            self.sink = gr.file_sink(gr.sizeof_gr_complex, options.to_file)
-        else:
-            self.sink = gr.null_sink(gr.sizeof_gr_complex)
-
-        self.connect(self.txpath, self.sink)
+       
+        self.connect(self.txpath)
 
 # /////////////////////////////////////////////////////////////////////////////
 #                                   main
@@ -57,8 +55,8 @@ class my_top_block(gr.top_block):
 
 def main():
 
-    def send_pkt(payload='', eof=False):
-        return tb.txpath.send_pkt(payload, eof)
+    def send_pkt(payload='', eof=False, fill=False):
+        return tb.txpath.send_pkt(payload, eof, fill)
 
     def rx_callback(ok, payload):
         print "ok = %r, payload = '%s'" % (ok, payload)
@@ -69,7 +67,6 @@ def main():
     expert_grp = parser.add_option_group("Expert")
 
     parser.add_option("-m", "--modulation", type="choice", choices=mods.keys(),
-                      default='psk',
                       help="Select modulation from: %s [default=%%default]"
                             % (', '.join(mods.keys()),))
 
@@ -95,12 +92,6 @@ def main():
         parser.print_help()
         sys.exit(1)
 
-    if options.to_file is None:
-        if options.tx_freq is None:
-            sys.stderr.write("You must specify -f FREQ or --freq FREQ\n")
-            parser.print_help(sys.stderr)
-            sys.exit(1)
-
     if options.from_file is not None:
         source_file = open(options.from_file, 'r')
 
@@ -114,27 +105,27 @@ def main():
     tb.start()                       # start flow graph
         
     # generate and send packets
-    nbytes = int(1e6 * options.megabytes)
-    n = 0
-    pktno = 0
-    pkt_size = int(options.size)
+    s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+    s.bind((HOST, PORT))
+    s.setblocking(0)
+    pktno = 1
+    dummy = '{:x^1328}'.format('x')
 
-    while n < nbytes:
-        if options.from_file is None:
-            data = (pkt_size - 2) * chr(pktno & 0xff) 
-        else:
-            data = source_file.read(pkt_size - 2)
-            if data == '':
-                break;
+    while 1:
+        timeout = False
+        try:
+            data = s.recv(8192)
+        except socket.error, (value, message):
+            data = dummy
+            pktno = 0
+            timeout = True
 
+        pkt_size = len(data)
         payload = struct.pack('!H', pktno & 0xffff) + data
-        send_pkt(payload)
-        n += len(payload)
-        sys.stderr.write('.')
-        if options.discontinuous and pktno % 5 == 4:
-            time.sleep(1)
+        send_pkt(payload, fill=timeout)
+        #sys.stderr.write('.')
         pktno += 1
-        
+
     send_pkt(eof=True)
 
     tb.wait()                       # wait for it to finish
