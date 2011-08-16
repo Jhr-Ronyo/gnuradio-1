@@ -1,0 +1,28 @@
+<?xml version="1.0"?>
+<!--
+###################################################
+##Message Sink
+###################################################
+ -->
+<block>
+	<name>UDP Message Sink</name>
+	<key>gr_udp_msg_sink</key>
+	<import>from gnuradio import gr</import>
+	<make>gr.udp_msg_sink($(id)_msgq_in, $host, $port)</make>
+	<param>
+		<name>IP address</name>
+		<key>host</key>
+		<value>localhost</value>
+		<type>string</type>
+	</param>
+	<param>
+		<name>UDP Port</name>
+		<key>port</key>
+		<value>9999</value>
+		<type>string</type>
+	</param>
+	<sink>
+		<name>out</name>
+		<type>msg</type>
+	</sink>
+</block>

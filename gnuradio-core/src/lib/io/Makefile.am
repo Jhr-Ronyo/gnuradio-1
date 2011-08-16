@@ -54,6 +54,8 @@ libio_la_SOURCES = 			\
 	sdr_1000.cc			\
 	gr_udp_sink.cc			\
 	gr_udp_source.cc                \
+	gr_udp_msg_source.cc		\
+	gr_udp_msg_sink.cc		\
 	gr_wavfile_sink.cc              \
 	gr_wavfile_source.cc            \
 	gri_wavfile.cc			\
@@ -88,6 +90,8 @@ grinclude_HEADERS = 			\
 	sdr_1000.h			\
 	gr_udp_sink.h			\
 	gr_udp_source.h                 \
+	gr_udp_msg_source.h		\
+	gr_udp_msg_sink.h		\
 	gr_wavfile_source.h	        \
 	gr_wavfile_sink.h               \
 	gri_wavfile.h			\
@@ -111,6 +115,8 @@ swiginclude_HEADERS =			\
 	sdr_1000.i			\
 	gr_udp_sink.i			\
 	gr_udp_source.i                 \
+	gr_udp_msg_source.i		\
+	gr_udp_msg_sink.i		\
 	gr_wavfile_source.i             \
 	gr_wavfile_sink.i		\
 	gr_tagged_file_sink.i

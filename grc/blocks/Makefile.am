@@ -133,6 +133,8 @@ dist_ourdata_DATA = \
 	gr_max_xx.xml \
 	gr_message_sink.xml \
 	gr_message_source.xml \
+	gr_udp_msg_source.xml \
+	gr_udp_msg_sink.xml \
 	gr_moving_average_xx.xml \
 	gr_mpsk_receiver_cc.xml \
 	gr_mpsk_sync_cc.xml \

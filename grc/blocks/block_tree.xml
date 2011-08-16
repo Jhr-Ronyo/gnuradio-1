@@ -22,6 +22,7 @@
 		<block>gr_message_source</block>
 		<block>pad_source</block>
 		<block>virtual_source</block>
+		<block>gr_udp_msg_source</block>
 	</cat>
 	<cat>
 		<name>Sinks</name>
@@ -34,6 +35,7 @@
 		<block>gr_message_sink</block>
 		<block>pad_sink</block>
 		<block>virtual_sink</block>
+		<block>gr_udp_msg_sink</block>
 	</cat>
 	<cat>
 		<name>Operators</name>
