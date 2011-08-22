@@ -43,7 +43,15 @@ public:
         _type(io_type),
         _nchan(num_channels),
         _stream_now(_nchan == 1),
+        _tag_now(false),
+        _rate(0)
     {
+        std::stringstream str;
+        str << name() << unique_id();
+        _id = pmt::pmt_string_to_symbol(str.str());
+        _ts_key = pmt::pmt_string_to_symbol("timestamp");
+        _rate_key = pmt::pmt_string_to_symbol("rate");
+
         _dev = uhd::usrp::multi_usrp::make(device_addr);
     }
 
@@ -53,10 +61,11 @@ public:
 
     void set_samp_rate(double rate){
         _dev->set_rx_rate(rate);
+        _rate = _dev->get_rx_rate();
     }
 
     double get_samp_rate(void){
-        return _dev->get_rx_rate();
+        return _rate;
     }
 
     uhd::tune_result_t set_center_freq(
@@ -181,6 +190,9 @@ public:
         gr_vector_const_void_star &input_items,
         gr_vector_void_star &output_items
     ){
+        uint32_t secs, ticks;
+        pmt::pmt_t val;
+
         //In order to allow for low-latency:
         //We receive all available packets without timeout.
         //This call can timeout under regular operation...
@@ -201,7 +213,18 @@ public:
         //handle possible errors conditions
         switch(_metadata.error_code){
         case uhd::rx_metadata_t::ERROR_CODE_NONE:
-            //TODO insert tag for time stamp
+            if (_tag_now) {
+                secs = _metadata.time_spec.get_full_secs();
+                ticks = _metadata.time_spec.get_tick_count(_rate);       
+
+                val = pmt::pmt_from_uint64(secs * _rate + ticks);
+                add_item_tag(0, nitems_written(0), _ts_key, val, _id);
+
+                val = pmt::pmt_from_double(_rate);
+                add_item_tag(0, nitems_written(0), _rate_key, val, _id);
+
+                _tag_now = false;
+            }
             break;
 
         case uhd::rx_metadata_t::ERROR_CODE_TIMEOUT:
@@ -210,6 +233,7 @@ public:
             return WORK_DONE;
 
         case uhd::rx_metadata_t::ERROR_CODE_OVERFLOW:
+            _tag_now = true;
             //ignore overflows and try work again
             //TODO insert tag for overflow
             return work(noutput_items, input_items, output_items);
@@ -231,6 +255,7 @@ public:
         stream_cmd.stream_now = _stream_now;
         stream_cmd.time_spec = get_time_now() + uhd::time_spec_t(reasonable_delay);
         _dev->issue_stream_cmd(stream_cmd);
+        _tag_now = true;
         return true;
     }
 
@@ -243,8 +268,10 @@ private:
     uhd::usrp::multi_usrp::sptr _dev;
     const uhd::io_type_t _type;
     size_t _nchan;
-    bool _stream_now;
+    bool _stream_now, _tag_now;
     uhd::rx_metadata_t _metadata;
+    double _rate;
+    pmt::pmt_t _id, _ts_key, _rate_key;
 };
 
 
