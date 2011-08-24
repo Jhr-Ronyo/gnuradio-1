@@ -32,10 +32,7 @@
   <import>from gnuradio import digital</import>
   <make>digital.psk2.psk_mod(
   constellation_points=$constellation_points,
-  mod_code=$mod_code,
-  differential=$differential,
   samples_per_symbol=$samples_per_symbol,
-  excess_bw=$excess_bw,
   verbose=$verbose,
   log=$log,
   )</make>
@@ -45,7 +42,7 @@
     <value>8</value>
     <type>int</type>
   </param>
-  <param>
+  <!--param>
     <name>Gray Code</name>
     <key>mod_code</key>
     <type>enum</type>
@@ -57,8 +54,8 @@
       <name>No</name>
       <key>none</key>
     </option>
-  </param>
-  <param>
+  </param-->
+  <!--param>
     <name>Differential Encoding</name>
     <key>differential</key>
     <value>True</value>
@@ -71,19 +68,19 @@
       <name>No</name>
       <key>False</key>
     </option>
-  </param>
+  </param-->
   <param>
     <name>Samples/Symbol</name>
     <key>samples_per_symbol</key>
     <value>2</value>
     <type>int</type>
   </param>
-  <param>
+  <!--param>
     <name>Excess BW</name>
     <key>excess_bw</key>
     <value>0.35</value>
     <type>real</type>
-  </param>
+  </param-->
   <param>
     <name>Verbose</name>
     <key>verbose</key>
