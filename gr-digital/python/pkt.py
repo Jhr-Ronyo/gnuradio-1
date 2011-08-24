@@ -41,7 +41,7 @@ class dummy_thread(threading.Thread):
             raise ValueError, "Invalid access_code %r. Must be string of 1's and 0's" % (access_code,)
         self._access_code = access_code
 
-    def send_pkt(self, payload='', eof=False, fill=False):
+    def send_pkt(self, payload='', eof=False):
         if eof:
             msg = gr.message(1)
         else:
@@ -56,11 +56,6 @@ class dummy_thread(threading.Thread):
                                            self._whitener_offset)
 
             msg = gr.message_from_string(pkt)
-
-        if fill and self._msgq_out.full_p():
-            time.sleep(.001)
-            return
-        else:
             self._msgq_out.insert_tail(msg)
 
     def run(self):

@@ -52,15 +52,36 @@ public:
         boost::asio::io_service io_svc;
         udp::endpoint ep;
         udp::socket sock(io_svc, udp::endpoint(udp::v4(), _port));
- 
+
+        boost::asio::socket_base::bytes_readable cmd(true);
+        sock.io_control(cmd);
+
         _running = true;
         while (_running) {
+#if 1
+            len = cmd.get();
+            if (len > 0) {
+                len = sock.receive_from(boost::asio::buffer(data, max_buf_size), ep);
+                msg = gr_make_message(0, 0.0, 0.0, len);
+                memcpy(msg->msg(), data, len);
+                _msgq->handle(msg);
+            } else {
+                msg = gr_make_message(0, 0.0, 0.0, 1384);
+                if (!_msgq->full_p())
+                    _msgq->handle(msg);
+            }
+#else
             len = sock.receive_from(boost::asio::buffer(data, max_buf_size), ep);
             if (len > 0) {
                 msg = gr_make_message(0, 0.0, 0.0, len);
                 memcpy(msg->msg(), data, len);
                 _msgq->handle(msg);
+            } else {
+                msg = gr_make_message(0, 0.0, 0.0, 1384);
+                if (!_msgq->full_p())
+                    _msgq->handle(msg);
             }
+#endif
         }
     }
 
