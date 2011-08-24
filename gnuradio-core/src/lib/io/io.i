@@ -62,6 +62,7 @@
 %include "ppio.i"
 %include "gr_message_source.i"
 %include "gr_message_sink.i"
+%include "gr_udp_msg_source.i"
 %include "gr_udp_msg_sink.i"
 %include "gr_udp_sink.i"
 %include "gr_udp_source.i"
