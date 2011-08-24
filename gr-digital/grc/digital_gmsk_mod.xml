@@ -23,27 +23,34 @@
 
 <!--
 ###################################################
-##Block Tree for GR Digital blocks.
+##GMSK Mod
 ###################################################
  -->
-<cat>
-	<name></name> <!-- Blank for Root Name -->
-	<cat>
-		<name>Digital</name>
-		<block>digital_costas_loop_cc</block>
-		<block>digital_cma_equalizer_cc</block>
-		<block>digital_lms_dd_equalizer_cc</block>
-		<block>digital_kurtotic_equalizer_cc</block>
-	</cat>
-	<cat>
-		<name>Digital Modulators</name>
-		<block>digital_dxpsk_mod</block>
-		<block>digital_dxpsk_demod</block>
-		<block>digital_psk_mod</block>
-		<block>digital_psk_demod</block>
-		<block>digital_qam_mod</block>
-		<block>digital_qam_demod</block>
-		<block>digital_gmsk_mod</block>
-		<block>digital_gmsk_demod</block>
-	</cat>
-</cat>
+<block>
+	<name>GMSK Mod</name>
+	<key>digital_gmsk_mod</key>
+	<import>from gnuradio.digital import gmsk</import>
+	<make>gmsk.gmsk_mod(samples_per_symbol=$samples_per_symbol,
+                                    bt=$bt, verbose=False, log=False)
+	</make>
+	<param>
+		<name>Samples per symbol</name>
+		<key>samples_per_symbol</key>
+		<value>2</value>
+		<type>int</type>
+	</param>
+	<param>
+		<name>BT</name>
+		<key>bt</key>
+		<value>0.35</value>
+		<type>real</type>
+	</param>
+	<sink>
+		<name>in</name>
+		<type>byte</type>
+	</sink>
+	<source>
+		<name>out</name>
+		<type>complex</type>
+	</source>
+</block>

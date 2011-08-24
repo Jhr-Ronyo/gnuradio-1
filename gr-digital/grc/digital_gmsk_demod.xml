@@ -1,0 +1,77 @@
+<?xml version="1.0"?>
+
+<!--
+ Copyright 2011 Free Software Foundation, Inc.
+ 
+ This file is part of GNU Radio
+ 
+ GNU Radio is free software; you can redistribute it and/or modify
+ it under the terms of the GNU General Public License as published by
+ the Free Software Foundation; either version 3, or (at your option)
+ any later version.
+ 
+ GNU Radio is distributed in the hope that it will be useful,
+ but WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ GNU General Public License for more details.
+ 
+ You should have received a copy of the GNU General Public License
+ along with GNU Radio; see the file COPYING.  If not, write to
+ the Free Software Foundation, Inc., 51 Franklin Street,
+ Boston, MA 02110-1301, USA.
+-->
+
+<!--
+###################################################
+##GMSK Demod
+###################################################
+ -->
+<block>
+	<name>GMSK Demod</name>
+	<key>digital_gmsk_demod</key>
+	<import>from gnuradio.digital import gmsk</import>
+	<make>gmsk.gmsk_demod(samples_per_symbol=$samples_per_symbol,
+                              gain_mu=$gain_mu, mu=$mu,
+                              omega_relative_limit=$omega_relative_limit,
+                              freq_error=$freq_error, verbose=False,
+                              log=False)
+	</make>
+	<param>
+		<name>Samples per symbol</name>
+		<key>samples_per_symbol</key>
+		<value>2</value>
+		<type>int</type>
+	</param>
+        <param>
+                <name>Gain Mu</name>
+                <key>gain_mu</key>
+                <value>0.175</value>
+                <type>real</type>
+        </param>
+        <param>
+                <name>Mu</name>
+                <key>mu</key>
+                <value>0.5</value>
+                <type>real</type>
+        </param>
+        <param>
+                <name>Omega Relative Limit</name>
+                <key>omega_relative_limit</key>
+                <value>0.005</value>
+                <type>real</type>
+        </param>
+        <param>
+                <name>Freq Error</name>
+                <key>freq_error</key>
+                <value>0.0</value>
+                <type>real</type>
+        </param>
+	<sink>
+		<name>in</name>
+		<type>complex</type>
+	</sink>
+	<source>
+		<name>out</name>
+		<type>byte</type>
+	</source>
+</block>

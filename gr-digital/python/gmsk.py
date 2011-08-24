@@ -25,7 +25,8 @@
 # See gnuradio-examples/python/digital for examples
 
 from gnuradio import gr
-from gnuradio import modulation_utils
+from gnuradio import digital
+from gnuradio.digital import modulation_utils
 from math import pi
 import numpy
 from pprint import pprint
@@ -220,12 +221,12 @@ class gmsk_demod(gr.hier_block2):
 
 	# the clock recovery block tracks the symbol clock and resamples as needed.
 	# the output of the block is a stream of soft symbols (float)
-	self.clock_recovery = gr.clock_recovery_mm_ff(self._omega, self._gain_omega,
+	self.clock_recovery = digital.clock_recovery_mm_ff(self._omega, self._gain_omega,
                                                       self._mu, self._gain_mu,
                                                       self._omega_relative_limit)
 
         # slice the floats at 0, outputting 1 bit (the LSB of the output byte) per sample
-        self.slicer = gr.binary_slicer_fb()
+        self.slicer = digital.binary_slicer_fb()
 
         if verbose:
             self._print_verbage()
