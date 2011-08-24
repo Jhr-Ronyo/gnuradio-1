@@ -52,7 +52,8 @@ public:
         udp::resolver resolver(io_svc);
         udp::resolver::query query(udp::v4(), _host, _port);
         udp::resolver::iterator iter = resolver.resolve(query);
- 
+
+        _running = true;
         while (_running) {
             msg = _msgq->delete_head();
             sock.send_to(boost::asio::buffer(msg->msg(), msg->length()), *iter);
