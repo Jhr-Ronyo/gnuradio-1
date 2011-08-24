@@ -1,5 +1,5 @@
 #
-# Copyright 2005, 2006, 2007 Free Software Foundation, Inc.
+# Copyright 2005-2011 Free Software Foundation, Inc.
 # 
 # This file is part of GNU Radio
 # 
@@ -19,138 +19,67 @@
 # Boston, MA 02110-1301, USA.
 # 
 
-from math import pi
-from gnuradio import gr
-import gnuradio.gr.gr_threading as _threading
-import packet_utils
-import digital_swig
-import time
+from gnuradio import gr, packet_utils
+import gnuradio.gr.gr_threading as threading
+import gnuradio.digital
 
+class dummy_thread(threading.Thread):
+    def set_val(self, access_code=None,
+                msgq_in=None, msgq_out=None,
+                use_whitener_offset=False):
 
-# /////////////////////////////////////////////////////////////////////////////
-#                   mod/demod with packets as i/o
-# /////////////////////////////////////////////////////////////////////////////
-
-class mod_pkts(gr.hier_block2):
-    """
-    Wrap an arbitrary digital modulator in our packet handling framework.
-
-    Send packets by calling send_pkt
-    """
-    def __init__(self, modulator, access_code=None, msgq_limit=2, pad_for_usrp=True,
-                 use_whitener_offset=False, modulate=True):
-        """
-	Hierarchical block for sending packets
-
-        Packets to be sent are enqueued by calling send_pkt.
-        The output is the complex modulated signal at baseband.
-
-        @param modulator: instance of modulator class (gr_block or hier_block2)
-        @type modulator: complex baseband out
-        @param access_code: AKA sync vector
-        @type access_code: string of 1's and 0's between 1 and 64 long
-        @param msgq_limit: maximum number of messages in message queue
-        @type msgq_limit: int
-        @param pad_for_usrp: If true, packets are padded such that they end up a multiple of 128 samples
-        @param use_whitener_offset: If true, start of whitener XOR string is incremented each packet
-        @param modulate: If false, no modulation will be performed.
-        
-        See gmsk_mod for remaining parameters
-        """
-        if modulate:
-            output_size = gr.sizeof_gr_complex
-        else:
-            output_size = gr.sizeof_char
-
-	gr.hier_block2.__init__(self, "mod_pkts",
-				gr.io_signature(0, 0, 0),                    # Input signature
-				gr.io_signature(1, 1, output_size))          # Output signature
-
-        self._modulator = modulator
-        self._pad_for_usrp = pad_for_usrp
-        self._use_whitener_offset = use_whitener_offset
-        self._whitener_offset = 0
-        
-        if access_code is None:
-            access_code = packet_utils.default_access_code
-        if not packet_utils.is_1_0_string(access_code):
-            raise ValueError, "Invalid access_code %r. Must be string of 1's and 0's" % (access_code,)
+        self._msgq_in = msgq_in
+        self._msgq_out = msgq_out
         self._access_code = access_code
-
-        # accepts messages from the outside world
-        self._pkt_input = gr.message_source(gr.sizeof_char, msgq_limit)
-        if modulate:
-            self.connect(self._pkt_input, self._modulator, self)
-        else:
-            self.connect(self._pkt_input, self)
+        self._use_whitener_offset = use_whitener_offset
 
     def send_pkt(self, payload='', eof=False, fill=False):
-        """
-        Send the payload.
-
-        @param payload: data to send
-        @type payload: string
-        """
         if eof:
-            msg = gr.message(1) # tell self._pkt_input we're not sending any more packets
+            msg = gr.message(1)
         else:
-            # print "original_payload =", string_to_hex_list(payload)
             pkt = packet_utils.make_packet(payload,
-                                           self._modulator.samples_per_symbol(),
-                                           self._modulator.bits_per_symbol(),
+                                           0,
+                                           0,
                                            self._access_code,
-                                           self._pad_for_usrp,
+                                           0,
                                            self._whitener_offset)
-            #print "pkt =", string_to_hex_list(pkt)
+
             msg = gr.message_from_string(pkt)
             if self._use_whitener_offset is True:
                 self._whitener_offset = (self._whitener_offset + 1) % 16
 
-        if fill and self._pkt_input.msgq().full_p():
+        if fill and self._msgq_out.full_p():
             time.sleep(.001)
             return
         else:
-            self._pkt_input.msgq().insert_tail(msg)
+            self._msgq_out.insert_tail(msg)
 
+    def run(self):
+        while 1:
+            msg = self._msgq_in.delete_head()
+            self.send_pkt(msg.to_string())
 
+class mod_pkts(gr.hier_block2):
+    def __init__(self, access_code=None,
+                 msgq_in=None, msgq_out=None,
+                 use_whitener_offset=False):
+
+	gr.hier_block2.__init__(self, "mod_pkts",
+				gr.io_signature(0, 0, 0),
+				gr.io_signature(0, 0, 0))
+        self.connect(self)
+
+        t = dummy_thread()
+        t.set_val(access_code, msgq_in, msgq_out, use_whitener_offset)
+        t.start()
 
 class demod_pkts(gr.hier_block2):
-    """
-    Wrap an arbitrary digital demodulator in our packet handling framework.
-
-    The input is complex baseband.  When packets are demodulated, they are passed to the
-    app via the callback.
-    """
-
-    def __init__(self, demodulator, access_code=None, callback=None, threshold=-1, demodulate=True):
-        """
-	Hierarchical block for demodulating and deframing packets.
-
-	The input is the complex modulated signal at baseband.
-        Demodulated packets are sent to the handler.
-
-        If demodulator is None it is assumed the input is already demodulated.
-
-        @param demodulator: instance of demodulator class (gr_block or hier_block2)
-        @type demodulator: complex baseband in
-        @param access_code: AKA sync vector
-        @type access_code: string of 1's and 0's
-        @param callback:  function of two args: ok, payload
-        @type callback: ok: bool; payload: string
-        @param threshold: detect access_code with up to threshold bits wrong (-1 -> use default)
-        @type threshold: int
-	"""
-
-        if demodulator is not None:
-            input_size = gr.sizeof_gr_complex
-        else:
-            input_size = gr.sizeof_char
+    def __init__(self, access_code=None, msgq_out=None, threshold=-1):
 
 	gr.hier_block2.__init__(self, "demod_pkts",
-				gr.io_signature(1, 1, input_size), # Input signature
-				gr.io_signature(0, 0, 0))          # Output signature
+				gr.io_signature(1, 1, 1),
+				gr.io_signature(0, 0, 0))
 
-        self._demodulator = demodulator
         if access_code is None:
             access_code = packet_utils.default_access_code
         if not packet_utils.is_1_0_string(access_code):
@@ -160,32 +89,26 @@ class demod_pkts(gr.hier_block2):
         if threshold == -1:
             threshold = 12              # FIXME raise exception
 
-        self._rcvd_pktq = gr.msg_queue()          # holds packets from the PHY
-        self.correlator = digital_swig.correlate_access_code_bb(access_code, threshold)
+        self._rcvd_pktq = gr.msg_queue()
+        self.correlator = gnuradio.digital.correlate_access_code_bb(access_code, threshold)
 
         self.framer_sink = gr.framer_sink_1(self._rcvd_pktq)
-        if self._demodulator is not None:
-            self.connect(self, self._demodulator, self.correlator, self.framer_sink)
-        else:
-            self.connect(self, self.correlator, self.framer_sink)
+        self.connect(self, self.correlator, self.framer_sink)
         
-        if callback is not None:
-            self._watcher = _queue_watcher_thread(self._rcvd_pktq, callback)
+        self._watcher = _queue_watcher_thread(self._rcvd_pktq, msgq_out)
 
-
-class _queue_watcher_thread(_threading.Thread):
-    def __init__(self, rcvd_pktq, callback):
-        _threading.Thread.__init__(self)
+class _queue_watcher_thread(threading.Thread):
+    def __init__(self, rcvd_pktq, msgq_out):
+        threading.Thread.__init__(self)
         self.setDaemon(1)
         self.rcvd_pktq = rcvd_pktq
-        self.callback = callback
+        self.msq_out = msgq_out
         self.keep_running = True
         self.start()
-
 
     def run(self):
         while self.keep_running:
             msg = self.rcvd_pktq.delete_head()
             ok, payload = packet_utils.unmake_packet(msg.to_string(), int(msg.arg1()))
-            if self.callback:
-                self.callback(ok, payload)
+            msg = gr.make_message_from_string(payload, 0, 0.0, 0.0)
+            self.msgq_out.handle(msg)

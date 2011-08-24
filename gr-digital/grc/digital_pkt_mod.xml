@@ -23,29 +23,24 @@
 
 <!--
 ###################################################
-##Block Tree for GR Digital blocks.
+##Packet Mod
 ###################################################
  -->
-<cat>
-	<name></name> <!-- Blank for Root Name -->
-	<cat>
-		<name>Digital</name>
-		<block>digital_costas_loop_cc</block>
-		<block>digital_cma_equalizer_cc</block>
-		<block>digital_lms_dd_equalizer_cc</block>
-		<block>digital_kurtotic_equalizer_cc</block>
-		<block>digital_pkt_mod</block>
-		<block>digital_pkt_demod</block>
-	</cat>
-	<cat>
-		<name>Digital Modulators</name>
-		<block>digital_dxpsk_mod</block>
-		<block>digital_dxpsk_demod</block>
-		<block>digital_psk_mod</block>
-		<block>digital_psk_demod</block>
-		<block>digital_qam_mod</block>
-		<block>digital_qam_demod</block>
-		<block>digital_gmsk_mod</block>
-		<block>digital_gmsk_demod</block>
-	</cat>
-</cat>
+<block>
+	<name>Packet Mod</name>
+	<key>digital_pkt_mod</key>
+	<import>from gnuradio.digital import pkt</import>
+	<make>pkt.mod_pkts(access_code=None,
+			$(id)_msgq_in,
+			$(id)_msgq_out, 
+			use_whitener_offset=False)
+	</make>
+	<sink>
+		<name>in</name>
+		<type>msg</type>
+	</sink>
+	<source>
+		<name>out</name>
+		<type>msg</type>
+	</source>
+</block>

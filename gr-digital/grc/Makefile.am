@@ -36,4 +36,6 @@ dist_grcblocks_DATA = \
 	digital_qam_mod.xml			\
 	digital_qam_demod.xml			\
 	digital_gmsk_mod.xml			\
-	digital_gmsk_demod.xml
+	digital_gmsk_demod.xml			\
+	digital_pkt_mod.xml			\
+	digital_pkt_demod.xml
