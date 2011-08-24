@@ -23,14 +23,13 @@
 #ifndef INCLUDED_GR_UDP_SOURCE_H
 #define INCLUDED_GR_UDP_SOURCE_H
 
-#include <gr_core_api.h>
 #include <gr_sync_block.h>
 #include <gruel/thread.h>
 
 class gr_udp_source;
 typedef boost::shared_ptr<gr_udp_source> gr_udp_source_sptr;
 
-GR_CORE_API gr_udp_source_sptr gr_make_udp_source(size_t itemsize, const char *host, 
+gr_udp_source_sptr gr_make_udp_source(size_t itemsize, const char *host, 
 				      unsigned short port,
 				      int payload_size=1472,
 				      bool eof=true, bool wait=true);
@@ -53,9 +52,9 @@ GR_CORE_API gr_udp_source_sptr gr_make_udp_source(size_t itemsize, const char *h
  *
 */
 
-class GR_CORE_API gr_udp_source : public gr_sync_block
+class gr_udp_source : public gr_sync_block
 {
-  friend GR_CORE_API gr_udp_source_sptr gr_make_udp_source(size_t itemsize,
+  friend gr_udp_source_sptr gr_make_udp_source(size_t itemsize,
 					       const char *host, 
 					       unsigned short port,
 					       int payload_size,

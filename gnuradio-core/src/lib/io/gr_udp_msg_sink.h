@@ -23,42 +23,16 @@
 #ifndef INCLUDED_GR_UDP_MSG_SINK_H
 #define INCLUDED_GR_UDP_MSG_SINK_H
 
-#include <gr_core_api.h>
-#include <gr_sync_block.h>
-#include <gr_message.h>
 #include <gr_msg_queue.h>
-#include <gruel/thread.h>
-#include <string>
 
 class gr_udp_msg_sink;
 typedef boost::shared_ptr<gr_udp_msg_sink> gr_udp_msg_sink_sptr;
 
-GR_CORE_API
-gr_udp_msg_sink_sptr gr_make_udp_msg_sink(gr_msg_queue_sptr msgq, const std::string host, const std::string port);
+gr_udp_msg_sink_sptr gr_make_udp_msg_sink(const std::string host,
+                                          const std::string port,
+                                          gr_msg_queue_sptr msgq);
 
-class GR_CORE_API gr_udp_msg_sink : public gr_sync_block {
-private:
-    gr_msg_queue_sptr d_msgq;
-    const std::string d_host;
-    const std::string d_port;
-    bool d_running;
-    gruel::thread d_thread;
-
-    friend GR_CORE_API
-    gr_udp_msg_sink_sptr gr_make_udp_msg_sink(gr_msg_queue_sptr msgq, const std::string host, const std::string port);
-
-protected:
-    gr_udp_msg_sink(gr_msg_queue_sptr msgq, const std::string host, const std::string port);
-
-public:
-    ~gr_udp_msg_sink();
-
-    bool start();
-    bool stop();
-
-    int work(int noutput_items,
-             gr_vector_const_void_star &input_items,
-             gr_vector_void_star &output_items);
+class gr_udp_msg_sink {
 };
 
 #endif /* INCLUDED_GR_UDP_MSG_SINK_H */

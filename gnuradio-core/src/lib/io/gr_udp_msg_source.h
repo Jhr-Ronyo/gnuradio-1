@@ -1,6 +1,5 @@
-/* -*- c++ -*- */
 /*
- * Copyright 2005 Free Software Foundation, Inc.
+ * Copyright 2011 Free Software Foundation, Inc.
  * 
  * This file is part of GNU Radio
  * 
@@ -23,43 +22,19 @@
 #ifndef INCLUDED_GR_UDP_MSG_SOURCE_H
 #define INCLUDED_GR_UDP_MSG_SOURCE_H
 
-#include <gr_core_api.h>
-#include <gr_sync_block.h>
-#include <gr_message.h>
 #include <gr_msg_queue.h>
-#include <string>
 
 class gr_udp_msg_source;
 typedef boost::shared_ptr<gr_udp_msg_source> gr_udp_msg_source_sptr;
 
-GR_CORE_API
-gr_udp_msg_source_sptr gr_make_udp_msg_source(gr_msg_queue_sptr msgq, int port);
+gr_udp_msg_source_sptr gr_make_udp_msg_source(int port,
+                                              gr_msg_queue_sptr msgq);
 
 /*!
  * \brief Gather received items into messages and insert into msgq
  * \ingroup sink_blk
  */
-class GR_CORE_API gr_udp_msg_source : public gr_sync_block {
-private:
-    gr_msg_queue_sptr d_msgq;
-    int d_port;
-    boost::thread_group thrd_grp;
-
-    friend GR_CORE_API
-    gr_udp_msg_source_sptr gr_make_udp_msg_source(gr_msg_queue_sptr msgq, int port);
-
-protected:
-    gr_udp_msg_source(gr_msg_queue_sptr msgq, int port);
-
-public:
-    ~gr_udp_msg_source();
-
-    bool start();
-    void dummy_loop();
-
-    int work(int noutput_items,
-             gr_vector_const_void_star &input_items,
-             gr_vector_void_star &output_items);
+class gr_udp_msg_source {
 };
 
 #endif /* INCLUDED_GR_UDP_MSG_SOURCE_H */

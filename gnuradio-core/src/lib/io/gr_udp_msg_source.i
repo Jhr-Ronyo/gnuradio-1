@@ -1,6 +1,5 @@
-/* -*- c++ -*- */
 /*
- * Copyright 2005 Free Software Foundation, Inc.
+ * Copyright 2011 Free Software Foundation, Inc.
  * 
  * This file is part of GNU Radio
  * 
@@ -22,11 +21,11 @@
 
 GR_SWIG_BLOCK_MAGIC(gr, udp_msg_source);
 
-gr_udp_msg_source_sptr gr_make_udp_msg_source(gr_msg_queue_sptr msgq, int port);
+gr_udp_msg_source_sptr gr_make_udp_msg_source(int port, gr_msg_queue_sptr msgq);
 
-class gr_udp_msg_source : public gr_sync_block {
+class gr_udp_msg_source {
 protected:
-    gr_udp_msg_source(gr_msg_queue_sptr msgq, int port);
+    gr_udp_msg_source(int port, gr_msg_queue_sptr msgq);
 
 public:
     ~gr_udp_msg_source();

@@ -23,14 +23,13 @@
 #ifndef INCLUDED_GR_UDP_SINK_H
 #define INCLUDED_GR_UDP_SINK_H
 
-#include <gr_core_api.h>
 #include <gr_sync_block.h>
 #include <gruel/thread.h>
 
 class gr_udp_sink;
 typedef boost::shared_ptr<gr_udp_sink> gr_udp_sink_sptr;
 
-GR_CORE_API gr_udp_sink_sptr
+gr_udp_sink_sptr
 gr_make_udp_sink (size_t itemsize, 
 		  const char *host, unsigned short port,
 		  int payload_size=1472, bool eof=true);
@@ -48,9 +47,9 @@ gr_make_udp_sink (size_t itemsize,
  * \param eof          Send zero-length packet on disconnect
  */
 
-class GR_CORE_API gr_udp_sink : public gr_sync_block
+class gr_udp_sink : public gr_sync_block
 {
-  friend GR_CORE_API gr_udp_sink_sptr gr_make_udp_sink (size_t itemsize, 
+  friend gr_udp_sink_sptr gr_make_udp_sink (size_t itemsize, 
 					    const char *host,
 					    unsigned short port,
 					    int payload_size, bool eof);

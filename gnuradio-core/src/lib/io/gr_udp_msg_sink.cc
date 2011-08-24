@@ -1,4 +1,3 @@
-/* -*- c++ -*- */
 /*
  * Copyright 2011 Free Software Foundation, Inc.
  * 
@@ -20,81 +19,59 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#ifdef HAVE_CONFIG_H
-#include "config.h"
-#endif
-
 #include <gr_udp_msg_sink.h>
-#include <gr_msg_queue.h>
-#include <gr_io_signature.h>
-#include <boost/thread.hpp>
+#include <gruel/thread.h>
 #include <boost/asio.hpp>
-#include <iostream>
+#include <boost/bind.hpp>
 
 using boost::asio::ip::udp;
 
-void msgq_reader(gr_msg_queue_sptr msgq, const std::string host, const std::string port)
-{
-    gr_message_sptr msg;
-    boost::asio::io_service io_svc;
-
-    udp::socket sock(io_svc, udp::endpoint(udp::v4(), 0));
-    udp::resolver resolver(io_svc);
-    udp::resolver::query query(udp::v4(), host, port);
-    udp::resolver::iterator iter = resolver.resolve(query);
-
-    while (1) {
-        msg = msgq->delete_head();
-        sock.send_to(boost::asio::buffer(msg->msg(), msg->length()), *iter);
+class gr_udp_msg_sink_impl : public gr_udp_msg_sink {
+public:
+    gr_udp_msg_sink_impl(const std::string host,
+                         const std::string port,
+                         gr_msg_queue_sptr msgq)
+        : _host(host), _port(port), _msgq(msgq), _running(false)
+    {
+        _msg_thread =
+            gruel::thread(boost::bind(&gr_udp_msg_sink_impl::run_loop, this));
     }
-}
 
-gr_udp_msg_sink_sptr gr_make_udp_msg_sink(gr_msg_queue_sptr msgq,
-                                          const std::string host,
-                                          const std::string port)
+    ~gr_udp_msg_sink_impl()
+    {
+        _running = false;
+        _msg_thread.join();
+    }
+
+    void run_loop()
+    {
+        gr_message_sptr msg;
+        boost::asio::io_service io_svc;
+
+        udp::socket sock(io_svc, udp::endpoint(udp::v4(), 0));
+        udp::resolver resolver(io_svc);
+        udp::resolver::query query(udp::v4(), _host, _port);
+        udp::resolver::iterator iter = resolver.resolve(query);
+ 
+        while (_running) {
+            msg = _msgq->delete_head();
+            sock.send_to(boost::asio::buffer(msg->msg(), msg->length()), *iter);
+        }
+    }
+
+protected:
+    const std::string _host;
+    const std::string _port;
+    gr_msg_queue_sptr _msgq;
+    bool _running;
+    gruel::thread _msg_thread;
+};
+
+gr_udp_msg_sink_sptr gr_make_udp_msg_sink(const std::string host,
+                                          const std::string port, 
+                                          gr_msg_queue_sptr msgq)
 {
-    return gnuradio::get_initial_sptr(new gr_udp_msg_sink(msgq, host, port));
+    return gr_udp_msg_sink_sptr(new gr_udp_msg_sink_impl(host, port, msgq));
 }
 
-gr_udp_msg_sink::gr_udp_msg_sink(gr_msg_queue_sptr msgq,
-                                 const std::string host,
-                                 const std::string port)
-    : gr_sync_block("udp_msg_sink",
-                    gr_make_io_signature(0, 0, 0),
-                    gr_make_io_signature(0, 0, 0)),
-    d_msgq(msgq), d_host(host), d_port(port), d_running(false)
-{
-}
 
-gr_udp_msg_sink::~gr_udp_msg_sink()
-{
-    stop();
-    d_thread.join();
-}
-
-bool gr_udp_msg_sink::start()
-{
-    if (d_running)
-        return false;
-
-    d_thread = boost::thread(msgq_reader, d_msgq, d_host, d_port);
-
-    return true;
-}
-
-bool gr_udp_msg_sink::stop()
-{
-    if (!d_running)
-        return false; 
-
-    d_thread.interrupt();
-
-    return true;
-}
-
-int gr_udp_msg_sink::work(int noutput_items,
-                          gr_vector_const_void_star &input_items,
-                          gr_vector_void_star &output_items)
-{
-    return -1;
-}

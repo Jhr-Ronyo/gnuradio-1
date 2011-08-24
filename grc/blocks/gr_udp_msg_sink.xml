@@ -8,7 +8,7 @@
 	<name>UDP Message Sink</name>
 	<key>gr_udp_msg_sink</key>
 	<import>from gnuradio import gr</import>
-	<make>gr.udp_msg_sink($(id)_msgq_in, $host, $port)</make>
+	<make>gr.udp_msg_sink($host, $port, $(id)_msgq_in)</make>
 	<param>
 		<name>IP address</name>
 		<key>host</key>
@@ -18,7 +18,7 @@
 	<param>
 		<name>UDP Port</name>
 		<key>port</key>
-		<value>9999</value>
+		<value>"5004"</value>
 		<type>string</type>
 	</param>
 	<sink>

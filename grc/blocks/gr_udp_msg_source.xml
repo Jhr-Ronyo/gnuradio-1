@@ -8,7 +8,7 @@
 	<name>UDP Message Source</name>
 	<key>gr_udp_msg_source</key>
 	<import>from gnuradio import gr</import>
-	<make>gr.udp_msg_source($(id)_msgq_out, $port)</make>
+	<make>gr.udp_msg_source($port, $(id)_msgq_out)</make>
 	<param>
 		<name>UDP Port</name>
 		<key>port</key>

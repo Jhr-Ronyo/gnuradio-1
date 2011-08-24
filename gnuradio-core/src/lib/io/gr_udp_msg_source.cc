@@ -1,4 +1,3 @@
-/* -*- c++ -*- */
 /*
  * Copyright 2011 Free Software Foundation, Inc.
  * 
@@ -20,104 +19,59 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#ifdef HAVE_CONFIG_H
-#include "config.h"
-#endif
-
 #include <gr_udp_msg_source.h>
-#include <gr_io_signature.h>
-#include <boost/thread/thread.hpp>
+#include <gruel/thread.h>
 #include <boost/bind.hpp>
 #include <boost/asio.hpp>
-#include <iostream>
 
-const int max_len = 4096;
+static const int max_buf_size = 4096;
 
 using boost::asio::ip::udp;
 
-class udp_reader {
+class gr_udp_msg_source_impl : public gr_udp_msg_source {
 public:
-    udp_reader(boost::asio::io_service &io_svc,
-               gr_msg_queue_sptr msgq,
-               short port);
+    gr_udp_msg_source_impl(int port, gr_msg_queue_sptr msgq)
+      : _port(port), _msgq(msgq), _running(false)
+    {
+        _udp_thread =
+            gruel::thread(boost::bind(&gr_udp_msg_source_impl::recv_loop, this));
+    }
 
-    void recv_handler(const boost::system::error_code& err,
-                      size_t bytes_recvd);
+    ~gr_udp_msg_source_impl()
+    {
+        _running = false;
+        _udp_thread.join();
+    }
 
-private:
-    boost::asio::io_service& io_svc;
-    udp::socket sock;
-    udp::endpoint sender_ep;
-    char data[max_len];
-    gr_msg_queue_sptr msgq;
+    void recv_loop()
+    {
+        size_t len;
+        char data[max_buf_size];
+        gr_message_sptr msg;
+
+        boost::asio::io_service io_svc;
+        udp::endpoint ep;
+        udp::socket sock(io_svc, udp::endpoint(udp::v4(), _port));
+ 
+        _running = true;
+        while (_running) {
+            len = sock.receive_from(boost::asio::buffer(data, max_buf_size), ep);
+            if (len > 0) {
+                msg = gr_make_message(0, 0.0, 0.0, len);
+                memcpy(msg->msg(), data, len);
+                _msgq->handle(msg);
+            }
+        }
+    }
+
+protected:
+    int _port;
+    gr_msg_queue_sptr _msgq;
+    bool _running;
+    gruel::thread _udp_thread;
 };
 
-udp_reader::udp_reader(boost::asio::io_service &io_svc,
-                       gr_msg_queue_sptr msgq,
-                       short port)
-    : io_svc(io_svc), sock(io_svc, udp::endpoint(udp::v4(), port)),
-      msgq(msgq)
+gr_udp_msg_source_sptr gr_make_udp_msg_source(int port, gr_msg_queue_sptr msgq)
 {
-    sock.async_receive_from(boost::asio::buffer(data, max_len), sender_ep,
-        boost::bind(&udp_reader::recv_handler, this,
-          boost::asio::placeholders::error,
-          boost::asio::placeholders::bytes_transferred));
+    return gr_udp_msg_source_sptr(new gr_udp_msg_source_impl(port, msgq));
 }
-
-void udp_reader::recv_handler(const boost::system::error_code& err,
-                              size_t bytes_recvd)
-{
-    if (!err && bytes_recvd > 0) {
-        gr_message_sptr msg = gr_make_message(0, 0, 0, bytes_recvd);
-        memcpy(msg->msg(), data, bytes_recvd);
-        msgq->handle(msg);
-    }
-
-    sock.async_receive_from(boost::asio::buffer(data, max_len), sender_ep,
-    boost::bind(&udp_reader::recv_handler, this,
-      boost::asio::placeholders::error,
-      boost::asio::placeholders::bytes_transferred));
-}
-
-gr_udp_msg_source_sptr gr_make_udp_msg_source(gr_msg_queue_sptr msgq, int port)
-{
-    return gnuradio::get_initial_sptr(new gr_udp_msg_source(msgq, port));
-}
-
-gr_udp_msg_source::gr_udp_msg_source(gr_msg_queue_sptr msgq, int port)
-    : gr_sync_block("udp_msg_source",
-                    gr_make_io_signature(0, 0, 0),
-                    gr_make_io_signature(0, 0, 0)),
-    d_msgq(msgq), d_port(port)
-{
-    start();
-}
-
-gr_udp_msg_source::~gr_udp_msg_source()
-{
-    thrd_grp.join_all();
-}
-
-bool gr_udp_msg_source::start()
-{
-    thrd_grp.create_thread(boost::bind(&gr_udp_msg_source::dummy_loop, this));
-    return true;
-}
-
-void gr_udp_msg_source::dummy_loop()
-{
-    try {
-        boost::asio::io_service io_srv;
-        udp_reader s(io_srv, d_msgq, d_port);
-        io_srv.run();
-    } catch (std::exception &e) {
-        std::cerr << "Exception: " << e.what() << "\n";
-    }
-}
-
-int gr_udp_msg_source::work(int noutput_items,
-                            gr_vector_const_void_star &input_items,
-                            gr_vector_void_star &output_items)
-{
-    return -1;
-;}
