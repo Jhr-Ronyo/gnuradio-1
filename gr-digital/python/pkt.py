@@ -23,6 +23,7 @@ from gnuradio import gr
 import gnuradio.gr.gr_threading as threading
 import gnuradio.digital
 import gnuradio.digital.packet_utils
+import struct
 
 class dummy_thread(threading.Thread):
     def set_val(self, access_code=None,
@@ -89,8 +90,8 @@ class demod_pkts(gr.hier_block2):
 				gr.io_signature(0, 0, 0))
 
         if access_code is None:
-            access_code = packet_utils.default_access_code
-        if not packet_utils.is_1_0_string(access_code):
+            access_code = gnuradio.digital.packet_utils.default_access_code
+        if not gnuradio.digital.packet_utils.is_1_0_string(access_code):
             raise ValueError, "Invalid access_code %r. Must be string of 1's and 0's" % (access_code,)
         self._access_code = access_code
 
@@ -110,13 +111,14 @@ class _queue_watcher_thread(threading.Thread):
         threading.Thread.__init__(self)
         self.setDaemon(1)
         self.rcvd_pktq = rcvd_pktq
-        self.msq_out = msgq_out
+        self.msgq_out = msgq_out
         self.keep_running = True
         self.start()
 
     def run(self):
         while self.keep_running:
             msg = self.rcvd_pktq.delete_head()
-            ok, payload = packet_utils.unmake_packet(msg.to_string(), int(msg.arg1()))
-            msg = gr.make_message_from_string(payload, 0, 0.0, 0.0)
+            ok, payload = gnuradio.digital.packet_utils.unmake_packet(msg.to_string(), int(msg.arg1()))
+            (pktno,) = struct.unpack('!H', payload[0:2])
+            msg = gr.message_from_string(payload)
             self.msgq_out.handle(msg)
