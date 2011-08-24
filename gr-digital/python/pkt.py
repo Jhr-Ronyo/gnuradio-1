@@ -19,9 +19,10 @@
 # Boston, MA 02110-1301, USA.
 # 
 
-from gnuradio import gr, packet_utils
+from gnuradio import gr
 import gnuradio.gr.gr_threading as threading
 import gnuradio.digital
+import gnuradio.digital.packet_utils
 
 class dummy_thread(threading.Thread):
     def set_val(self, access_code=None,
@@ -30,14 +31,23 @@ class dummy_thread(threading.Thread):
 
         self._msgq_in = msgq_in
         self._msgq_out = msgq_out
-        self._access_code = access_code
         self._use_whitener_offset = use_whitener_offset
+        self._whitener_offset = 0
+
+        if access_code is None:
+            access_code = gnuradio.digital.packet_utils.default_access_code
+        if not gnuradio.digital.packet_utils.is_1_0_string(access_code):
+            raise ValueError, "Invalid access_code %r. Must be string of 1's and 0's" % (access_code,)
+        self._access_code = access_code
 
     def send_pkt(self, payload='', eof=False, fill=False):
         if eof:
             msg = gr.message(1)
         else:
-            pkt = packet_utils.make_packet(payload,
+            if self._use_whitener_offset is True:
+                self._whitener_offset = (self._whitener_offset + 1) % 16
+
+            pkt = gnuradio.digital.packet_utils.make_packet(payload,
                                            0,
                                            0,
                                            self._access_code,
@@ -45,8 +55,6 @@ class dummy_thread(threading.Thread):
                                            self._whitener_offset)
 
             msg = gr.message_from_string(pkt)
-            if self._use_whitener_offset is True:
-                self._whitener_offset = (self._whitener_offset + 1) % 16
 
         if fill and self._msgq_out.full_p():
             time.sleep(.001)

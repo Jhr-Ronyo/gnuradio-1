@@ -31,8 +31,8 @@
 	<key>digital_pkt_mod</key>
 	<import>from gnuradio.digital import pkt</import>
 	<make>pkt.mod_pkts(access_code=None,
-			$(id)_msgq_in,
-			$(id)_msgq_out, 
+			msgq_in=$(id)_msgq_in,
+			msgq_out=$(id)_msgq_out, 
 			use_whitener_offset=False)
 	</make>
 	<sink>
