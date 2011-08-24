@@ -38,8 +38,6 @@ dist_ourdata_DATA = \
 	blks2_fm_deemph.xml \
 	blks2_fm_demod_cf.xml \
 	blks2_fm_preemph.xml \
-	blks2_gmsk_demod.xml \
-	blks2_gmsk_mod.xml \
 	blks2_logpwrfft_x.xml \
 	blks2_nbfm_rx.xml \
 	blks2_nbfm_tx.xml \
