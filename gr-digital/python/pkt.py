@@ -34,6 +34,7 @@ class dummy_thread(threading.Thread):
         self._msgq_out = msgq_out
         self._use_whitener_offset = use_whitener_offset
         self._whitener_offset = 0
+        self._pktno = 1
 
         if access_code is None:
             access_code = gnuradio.digital.packet_utils.default_access_code
@@ -61,7 +62,9 @@ class dummy_thread(threading.Thread):
     def run(self):
         while 1:
             msg = self._msgq_in.delete_head()
+            payload = struct.pack('!H', pktno & 0xffff) + msg.to_string()
             self.send_pkt(msg.to_string())
+            self._pktno += 1
 
 class mod_pkts(gr.hier_block2):
     def __init__(self, access_code=None,
@@ -109,11 +112,24 @@ class _queue_watcher_thread(threading.Thread):
         self.msgq_out = msgq_out
         self.keep_running = True
         self.start()
+        self.n_rcvd = 0
+        self.n_right = 0
+
+    def callback(self, ok, payload):
+        (pktno,) = struct.unpack('!H', payload[0:2])
+        self.n_rcvd += 1
+        if ok:
+            self.n_right += 1
+
+        print "ok = %5s  pktno = %4d  n_rcvd = %4d  n_right = %4d" % (
+            ok, pktno, self.n_rcvd, self.n_right)
+
+        if pktno > 0:
+            msg = gr.message_from_string(payload)
+            self.msgq_out.handle(msg)
 
     def run(self):
         while self.keep_running:
             msg = self.rcvd_pktq.delete_head()
             ok, payload = gnuradio.digital.packet_utils.unmake_packet(msg.to_string(), int(msg.arg1()))
-            (pktno,) = struct.unpack('!H', payload[0:2])
-            msg = gr.message_from_string(payload)
-            self.msgq_out.handle(msg)
+            self.callback(ok, payload)
