@@ -26,7 +26,7 @@ EXTRA_DIST += \
 	usrp.iss.in \
 	usrp.inf
 
-SUBDIRS = host firmware fpga doc
+SUBDIRS = host
 
 pkgconfigdir = $(libdir)/pkgconfig
 pkgconfig_DATA = \
