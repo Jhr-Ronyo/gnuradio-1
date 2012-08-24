@@ -31,16 +31,9 @@ libusrp_la_common_LIBADD = 		\
 	$(BOOST_THREAD_LIB)		\
 	../misc/libmisc.la
 
-# darwin fusb requires gruel (for threading)
-if FUSB_TECH_darwin
-AM_CPPFLAGS = $(GRUEL_INCLUDES) $(common_INCLUDES) $(BOOST_CPPFLAGS) $(WITH_INCLUDES)
-libusrp_la_LIBADD = $(libusrp_la_common_LIBADD) $(GRUEL_LA)
-libusrp_la_LDFLAGS = $(libusrp_la_common_LDFLAGS) -framework CoreFoundation
-else
 AM_CPPFLAGS = $(common_INCLUDES) $(BOOST_CPPFLAGS) $(WITH_INCLUDES)
 libusrp_la_LIBADD = $(libusrp_la_common_LIBADD)
 libusrp_la_LDFLAGS = $(libusrp_la_common_LDFLAGS)
-endif
 
 EXTRA_DIST += 				\
 	std_paths.h.in			\
@@ -55,23 +48,13 @@ BUILT_SOURCES += usrp_dbid.cc \
 # FUSB_TECH is set at configure time by way of
 #   usrp/config/usrp_fusb_tech.m4.
 #   It indicates which fast usb strategy we should be building.
-#   We currently implement "generic", "darwin", "win32" and "linux"
+#   We currently implement "generic", "win32" and "linux"
 
 
 generic_CODE = 				\
 	fusb_generic.cc			\
 	fusb_sysconfig_generic.cc	\
 	usrp_prims_libusb0.cc		
-
-darwin_CODE =				\
-	fusb_darwin.cc			\
-	fusb_sysconfig_darwin.cc 	\
-	README_OSX			\
-	circular_buffer.h		\
-	circular_linked_list.h		\
-	darwin_libusb.h			\
-	usrp_prims_libusb0.cc		
-
 
 win32_CODE =				\
 	fusb_win32.cc			\
@@ -99,7 +82,6 @@ libusb1_CODE =				\
 #
 EXTRA_libusrp_la_SOURCES =		\
 	$(generic_CODE)			\
-	$(darwin_CODE)			\
 	$(win32_CODE)			\
 	$(linux_CODE)			\
 	$(ra_wb_CODE)			\
@@ -136,10 +118,6 @@ if FUSB_TECH_generic
 libusrp_la_SOURCES = $(libusrp_la_common_SOURCES) $(generic_CODE)
 endif
 
-if FUSB_TECH_darwin
-libusrp_la_SOURCES = $(libusrp_la_common_SOURCES) $(darwin_CODE)
-endif
-
 if FUSB_TECH_win32
 libusrp_la_SOURCES = $(libusrp_la_common_SOURCES) $(win32_CODE)
 endif
@@ -165,7 +143,6 @@ noinst_HEADERS =			\
 	db_wbxng_adf4350.h		\
 	db_wbxng_adf4350_regs.h		\
 	fusb.h				\
-	fusb_darwin.h			\
 	fusb_generic.h			\
 	fusb_linux.h			\
 	fusb_libusb1.h			\

@@ -49,9 +49,6 @@ AC_DEFUN([USRP_SET_FUSB_TECHNIQUE],[
               FUSB_TECH=generic
           fi
           ;;
-        darwin*)
-          FUSB_TECH=darwin
-          ;;
         cygwin*|win*|mingw*)
           FUSB_TECH=win32
           ;;
@@ -73,7 +70,6 @@ AC_DEFUN([USRP_SET_FUSB_TECHNIQUE],[
       AC_SUBST(FUSB_TECH)
   fi
 
-  AM_CONDITIONAL(FUSB_TECH_darwin,   test x$FUSB_TECH = xdarwin)
   AM_CONDITIONAL(FUSB_TECH_win32,    test x$FUSB_TECH = xwin32)
   AM_CONDITIONAL(FUSB_TECH_generic,  test x$FUSB_TECH = xgeneric)
   AM_CONDITIONAL(FUSB_TECH_linux,    test x$FUSB_TECH = xlinux)

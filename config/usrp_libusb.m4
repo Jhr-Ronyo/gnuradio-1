@@ -136,12 +136,6 @@ AC_DEFUN([USRP_LIBUSB], [
 
         AC_LANG_PUSH(C)
         save_LIBS="$LIBS"
-        case "$host_os" in
-          darwin*)
-            USB_LIBS="$USB_LIBS -lIOKit"
-            ;;
-          *) ;;
-        esac
         LIBS="$USB_LIBS"
 
  	dnl find the library link name
