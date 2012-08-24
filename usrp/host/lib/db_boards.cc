@@ -33,7 +33,6 @@
 #include <usrp/db_flexrf.h>
 #include <usrp/db_flexrf_mimo.h>
 #include <usrp/db_wbxng.h>
-#include <usrp/db_xcvr2450.h>
 #include <usrp/db_dtt754.h>
 #include <usrp/db_dtt768.h>
 #include <usrp/db_bitshark_rx.h>
@@ -178,13 +177,6 @@ instantiate_dbs(int dbid, usrp_basic_sptr usrp, int which_side)
     break;
   case(USRP_DBID_FLEX_400_RX_MIMO_B):
     db.push_back(db_base_sptr(new db_flexrf_400_rx_mimo_b(usrp, which_side)));
-    break;
-
-  case(USRP_DBID_XCVR2450_TX):
-    db.push_back(db_base_sptr(new db_xcvr2450_tx(usrp, which_side)));
-    break;
-  case(USRP_DBID_XCVR2450_RX):
-    db.push_back(db_base_sptr(new db_xcvr2450_rx(usrp, which_side)));
     break;
 
 #if 0	// FIXME wbx doesn't compile
