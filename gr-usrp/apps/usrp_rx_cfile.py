@@ -82,6 +82,8 @@ class my_top_block(gr.top_block):
             options.rx_subdev_spec = usrp.pick_rx_subdevice(self.u)
         self.u.set_mux(usrp.determine_rx_mux_value(self.u, options.rx_subdev_spec))
 
+        self.u.set_fpga_master_clock_freq(52000000)
+
         # determine the daughterboard subdevice we're using
         self.subdev = usrp.selected_subdev(self.u, options.rx_subdev_spec)
         print "Using RX d'board %s" % (self.subdev.side_and_name(),)
