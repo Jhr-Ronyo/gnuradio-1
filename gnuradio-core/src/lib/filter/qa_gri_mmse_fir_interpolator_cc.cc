@@ -29,6 +29,7 @@
 #include <qa_gri_mmse_fir_interpolator_cc.h>
 #include <gri_mmse_fir_interpolator_cc.h>
 #include <stdio.h>
+#include <stdint.h>
 #include <cmath>
 #include <stdexcept>
 
