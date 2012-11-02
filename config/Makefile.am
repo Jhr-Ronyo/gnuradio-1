@@ -100,7 +100,6 @@ m4macros = \
 	pkg.m4 \
 	sdl.m4 \
 	usrp_fusb_tech.m4 \
-	usrp_libusb.m4 \
-	usrp_sdcc.m4
+	usrp_libusb.m4
 
 EXTRA_DIST += $(m4macros)
