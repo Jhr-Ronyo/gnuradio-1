@@ -20,7 +20,3 @@
 # 
 
 SUBDIRS = misc lib include apps
-
-if PYTHON
-SUBDIRS += swig
-endif 
