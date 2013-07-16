@@ -40,6 +40,7 @@ m4macros = \
 	ax_boost_system.m4 \
 	ax_boost_test_exec_monitor.m4 \
 	ax_boost_thread.m4 \
+	ax_boost_unit_test_framework.m4 \
 	ax_boost_wserialization.m4 \
 	bnv_have_qt.m4 \
 	cppunit.m4 \
